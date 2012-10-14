@@ -2,7 +2,9 @@
   "name": "node-example",
   "version": "0.0.1",
   "dependencies": {
-    "express": "2.5.x"
+    "express": "2.5.x",
+    "mongodb": "1.1.x",
+    "mongoose": "x.x.x"
   },
   "engines": {
     "node": "0.8.x",
