@@ -1,3 +1,15 @@
+/**
+//
+//  web.js
+//  projectPS
+//
+//  This is the main server for the PhotoStream project running on NodeJS
+//
+//  Created by Salvatore D'Agostino on 2012-10-14 21:53
+//  Copyright 2012. All rights reserved.
+//
+**/
+
 var application_root = __dirname,
     express          = require("express"),
     path             = require("path"),
