@@ -1,5 +1,8 @@
 Readme
 =============
 
-This will fill up as I start to add functionality to this project
-------------------------------------------------------------------
+Available Commands:
+---------------------
+
+/api
+/user
