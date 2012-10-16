@@ -19,6 +19,15 @@ var application_root = __dirname,
 
 var app = express.createServer();
 
+// testVars
+var testUserObject         = {};
+testUserObject['username'] = "userone";
+testUserObject['password'] = "12345";
+testUserObject['lang']     = "eng";
+
+// console.log(JSON.stringify(testUserObject));
+
+
 // Database
 
 mongoose.connect('mongodb://localhost/photostream');
