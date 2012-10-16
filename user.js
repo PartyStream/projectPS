@@ -19,14 +19,19 @@
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:41
 +   \param response   The reponse to return to the client
-+   \param userObject The user data to insert
++   \param userObject (JSON) The user data to insert
 +
 +   \return True if pass, False otherwise
 **/
 function createUser(response,userObject)
 {
-    console.log('Creating a user ');
-    console.dir(userObject);
+    // Convert JSON string to object
+    user = JSON.parse(userObject);
+
+    console.log('Creating user:');
+    console.dir(user);
+
+    // Send response to client
     response.writeHead(200,{"Content-Type":"text/plain"});
     response.write("Create User! ");
     response.end();
@@ -52,6 +57,8 @@ exports.createUser = createUser;
 function readUser(response,userId)
 {
     console.log('Reading user: ' + userId);
+
+    // Send response to client
     response.writeHead(200,{"Content-Type":"text/plain"});
     response.write("User id: " + userId);
     response.end();
