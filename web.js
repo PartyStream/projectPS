@@ -43,6 +43,18 @@ app.get('/api', function (req, res) {
   res.send('PS API is running');
 });
 
+/**
++++++++++++++++++++++++++++++++++++++++++++++++++++
++++                                             +++
++                  User Object                    +
++++                                             +++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+**/
+// Create
+app.post('/user', function (req,res){
+  user.createUser(res,req.body.user);
+});
+// Read
 app.get('/user:id', function (req,res) {
     user.readUser(res,req.params.id);
 });
