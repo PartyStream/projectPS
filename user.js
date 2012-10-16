@@ -19,15 +19,19 @@
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:41
 +   \param response   The reponse to return to the client
-+   \param username   The username for the new user
-+   \param password   The password for the new user
++   \param userObject The user data to insert
 +
 +   \return True if pass, False otherwise
 **/
-function createUser(response,username,password)
+function createUser(response,userObject)
 {
+    console.log('Creating a user ');
+    console.dir(userObject);
+    response.writeHead(200,{"Content-Type":"text/plain"});
+    response.write("Create User! ");
+    response.end();
     // TODO Create user in DB
-    console.log('Creating a user');
+    
     
 }// END function createUser
 exports.createUser = createUser;
@@ -47,11 +51,11 @@ exports.createUser = createUser;
 **/
 function readUser(response,userId)
 {
-    // TODO Read a user record
     console.log('Reading user: ' + userId);
     response.writeHead(200,{"Content-Type":"text/plain"});
     response.write("User id: " + userId);
     response.end();
+    // TODO Read a user record
     
 }// END function readUser
 exports.readUser = readUser;
