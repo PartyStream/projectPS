@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "express": "2.5.x",
-    "mongodb": "1.1.x",
-    "mongoose": "x.x.x"
+    "pg": "0.8.6"
   },
   "engines": {
     "node": "0.8.x",
