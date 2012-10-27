@@ -13,7 +13,6 @@
 var application_root = __dirname,
     express          = require("express"),
     path             = require("path"),
-    mongoose         = require('mongoose'),
     url              = require("url") ,
     user             = require('./user');
 
@@ -25,7 +24,7 @@ testUserObject['username'] = "userone";
 testUserObject['password'] = "12345";
 testUserObject['lang']     = "eng";
 
-// console.log(JSON.stringify(testUserObject));
+console.log(JSON.stringify(testUserObject));
 
 
 // Database
