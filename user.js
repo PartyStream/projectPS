@@ -10,7 +10,6 @@
 //
 **/
 
-
 /**
 +   \brief createUser
 +
@@ -25,11 +24,27 @@
 **/
 function createUser(response,userObject)
 {
-    // Convert JSON string to object
-    user = JSON.parse(userObject);
+    
+    var user   = JSON.parse(userObject);
 
+    console.dir(process.env.DATABASE_URL);
+    
     console.log('Creating user:');
     console.dir(user);
+
+    var query;
+
+    client.connect();
+
+    // query = client.query({
+    //   name: 'insert user',
+    //   text: "INSERT INTO users(username, password, date_created) values($1, $2, $3)",
+    //   values: [user.username, user.password,123]
+    // });
+    
+    query = client.query('SELECT * FROM users');
+
+    query.on('end', function() { client.end(); });
 
     // Send response to client
     response.writeHead(200,{"Content-Type":"text/plain"});
