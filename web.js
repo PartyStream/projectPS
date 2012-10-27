@@ -14,7 +14,12 @@ var application_root = __dirname,
     express          = require("express"),
     path             = require("path"),
     url              = require("url") ,
-    user             = require('./user');
+    user             = require('./user'),
+    pg               = require('pg'),
+    client           = new pg.Client(process.env.DATABASE_URL);
+
+// Connect To DB
+client.connect();
 
 var app = express.createServer();
 
@@ -25,11 +30,6 @@ testUserObject['password'] = "12345";
 testUserObject['lang']     = "eng";
 
 console.log(JSON.stringify(testUserObject));
-
-
-// Database
-
-mongoose.connect('mongodb://localhost/photostream');
 
 // Config
 app.configure(function () {
