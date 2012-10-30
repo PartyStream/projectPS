@@ -22,7 +22,7 @@
 +
 +   \return True if pass, False otherwise
 **/
-function createUser(response,userObject)
+function createUser(response,userObject,client)
 {
     
     var user   = JSON.parse(userObject);
@@ -34,13 +34,11 @@ function createUser(response,userObject)
 
     var query;
 
-    client.connect();
-
-    // query = client.query({
-    //   name: 'insert user',
-    //   text: "INSERT INTO users(username, password, date_created) values($1, $2, $3)",
-    //   values: [user.username, user.password,123]
-    // });
+    query = client.query({
+      name: 'insert user',
+      text: "INSERT INTO users(username, password) values($1, $2)",
+      values: [user.username, user.password]
+    });
     
     query = client.query('SELECT * FROM users');
 
