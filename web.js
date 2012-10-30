@@ -15,8 +15,16 @@ var application_root = __dirname,
     path             = require("path"),
     url              = require("url") ,
     user             = require('./user'),
-    pg               = require('pg'),
-    client           = new pg.Client(process.env.DATABASE_URL);
+    pg               = require('pg').native,
+    // client           = new pg.Client(process.env.DATABASE_URL);
+    client           = new pg.Client({
+      user: 'ywvaxcfcyvqipg',
+      password: 'rrKizy0m_X1TeNhAQj8lXsZ1mQ',
+      database: 'deqbs2oph32c36',
+      host: 'ec2-54-243-38-139.compute-1.amazonaws.com',
+      port: 5432
+    });
+
 
 // Connect To DB
 client.connect();
@@ -60,7 +68,7 @@ app.get('/api', function (req, res) {
 **/
 // Create
 app.post('/user', function (req,res){
-  user.createUser(res,req.body.user);
+  user.createUser(res,req.body.user,client);
 });
 // Read
 app.get('/user:id', function (req,res) {
