@@ -19,6 +19,7 @@
 +   \date  2012-10-14 21:41
 +   \param response   The reponse to return to the client
 +   \param userObject (JSON) The user data to insert
++   \param client     (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
@@ -27,33 +28,24 @@ function createUser(response,userObject,client)
     
     var user   = JSON.parse(userObject);
 
-    console.dir(process.env.DATABASE_URL);
-    
     console.log('Creating user:');
-    console.dir(user);
-
     var query;
 
     query = client.query({
       name: 'insert user',
-      text: "INSERT INTO users(username, password) values($1, $2)",
+      text: "INSERT INTO users(username, password,date_created) values($1, $2,current_timestamp)",
       values: [user.username, user.password]
     });
     
-    query = client.query('SELECT * FROM users');
-
     query.on('end', function() { client.end(); });
 
     // Send response to client
     response.writeHead(200,{"Content-Type":"text/plain"});
     response.write("Create User! ");
     response.end();
-    // TODO Create user in DB
-    
     
 }// END function createUser
 exports.createUser = createUser;
-
 
 /**
 +   \brief readUser
@@ -64,18 +56,29 @@ exports.createUser = createUser;
 +   \date  2012-10-14 21:44
 +   \param response  The response to return to the client
 +   \param userId    The ID of the user to get
++   \param client    (PSQL) PSQL client object
 +
 +   \return User object, False otherwise
 **/
-function readUser(response,userId)
+function readUser(response,userId,client)
 {
     console.log('Reading user: ' + userId);
 
-    // Send response to client
-    response.writeHead(200,{"Content-Type":"text/plain"});
-    response.write("User id: " + userId);
-    response.end();
-    // TODO Read a user record
+    var query;
+
+    query = client.query({
+      name: 'insert user',
+      text: "SELECT * from users where id = $1",
+      values: [userId]
+    });
+
+    // return the user retrieved
+    query.on('row', function(row) {
+        var json = JSON.stringify(row);
+        console.log(json);
+        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+        response.end(json);
+    });
     
 }// END function readUser
 exports.readUser = readUser;
