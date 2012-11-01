@@ -29,7 +29,7 @@ var application_root = __dirname,
 // Connect To DB
 client.connect();
 
-var app = express.createServer();
+var app = express();
 
 // testVars
 var testUserObject         = {};
@@ -71,8 +71,8 @@ app.post('/user', function (req,res){
   user.createUser(res,req.body.user,client);
 });
 // Read
-app.get('/user:id', function (req,res) {
-    user.readUser(res,req.params.id);
+app.get('/user/:id', function (req,res) {
+    user.readUser(res,req.params.id,client);
 });
 
 // Launch server
