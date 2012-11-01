@@ -44,6 +44,7 @@
             <uid><![CDATA[95A6B6BB-04E5-419A-A1D3-13CDCACFFEAB]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+        <labelWindowIndex><![CDATA[3]]></labelWindowIndex>
         <uid><![CDATA[24A8E90A-8F14-4CDA-AE38-1B8C3E52AC42]]></uid>
     </SQLTable>
     <SQLTable>
@@ -99,6 +100,7 @@
             <uid><![CDATA[5D391147-859E-472D-98AC-DB16680818FD]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+        <labelWindowIndex><![CDATA[2]]></labelWindowIndex>
         <uid><![CDATA[392AD69F-D6DE-42EF-9FF4-2B94B7382297]]></uid>
     </SQLTable>
     <SQLTable>
@@ -159,6 +161,7 @@
             <uid><![CDATA[E28B6310-8FCD-4361-A004-DF3C6A1F67EC]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+        <labelWindowIndex><![CDATA[1]]></labelWindowIndex>
         <temporaryOriginalName><![CDATA[Table1]]></temporaryOriginalName>
         <uid><![CDATA[601F8210-2994-4292-84B1-B4686E798A06]]></uid>
     </SQLTable>
@@ -203,6 +206,7 @@
             <uid><![CDATA[0B725B18-8786-4CA8-B85E-DE87508ECD30]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+        <labelWindowIndex><![CDATA[0]]></labelWindowIndex>
         <uid><![CDATA[9052622F-BDC9-4FB0-88FF-E098AD140A19]]></uid>
     </SQLTable>
     <SQLDocumentInfo>
@@ -348,13 +352,13 @@ L3N0cmluZz4KCTxrZXk+Y29tLmFwcGxlLnByaW50LnRpY2tldC50eXBlPC9rZXk+
 Cgk8c3RyaW5nPmNvbS5hcHBsZS5wcmludC5QYWdlRm9ybWF0VGlja2V0PC9zdHJp
 bmc+CjwvZGljdD4KPC9wbGlzdD4KhpKEmZkLTlNQYXBlclNpemWGkoSEhAdOU1Zh
 bHVlAJSEASqEhAt7Q0dTaXplPWRkfZ+BZAKBGAOGkoSZmRZOU0hvcml6b250YWxs
-eUNlbnRlcmVkhpKEhIQITlNOdW1iZXIAn56EhAFjoQGGkoSZmRROU1ZlcnRpY2Fs
-bHlDZW50ZXJlZIaSopKEmZkMTlNMZWZ0TWFyZ2luhpKEo56EhAFkohKGkoSZmQ1O
-U1JpZ2h0TWFyZ2luhpKEo56oohKGkoSZmQtOU1RvcE1hcmdpboaShKOeqKIehpKE
-mZkNTlNPcmllbnRhdGlvboaShKOehJeXAIaShJmZFU5TSG9yaXpvbmFsUGFnaW5h
-dGlvboaSrpKEmZkUTlNWZXJ0aWNhbFBhZ2luYXRpb26Gkq6ShJmZDk5TQm90dG9t
-TWFyZ2luhpKEo56oojSGkoSZmQ9OU1NjYWxpbmdGYWN0b3KGkoSjnqiiAYaShJmZ
-C05TUGFwZXJOYW1lhpKEmZkJbmEtbGV0dGVyhoaG
+eUNlbnRlcmVkhpKEhIQITlNOdW1iZXIAn56El5cBhpKEmZkUTlNWZXJ0aWNhbGx5
+Q2VudGVyZWSGkqKShJmZDE5TTGVmdE1hcmdpboaShKOehIQBZKEShpKEmZkNTlNS
+aWdodE1hcmdpboaShKOeqKEShpKEmZkLTlNUb3BNYXJnaW6GkoSjnqihHoaShJmZ
+DU5TT3JpZW50YXRpb26GkoSjnqSXAIaShJmZFU5TSG9yaXpvbmFsUGFnaW5hdGlv
+boaSrpKEmZkUTlNWZXJ0aWNhbFBhZ2luYXRpb26Gkq6ShJmZDk5TQm90dG9tTWFy
+Z2luhpKEo56ooTSGkoSZmQ9OU1NjYWxpbmdGYWN0b3KGkoSjnqihAYaShJmZC05T
+UGFwZXJOYW1lhpKEmZkJbmEtbGV0dGVyhoaG
 ]]></encodedPrintInfo>
         <autoSizeTablesOption><![CDATA[0]]></autoSizeTablesOption>
         <documentScaleFactor><![CDATA[1]]></documentScaleFactor>
@@ -370,9 +374,9 @@ C05TUGFwZXJOYW1lhpKEmZkJbmEtbGV0dGVyhoaG
         <snapToGrid><![CDATA[1]]></snapToGrid>
         <SourceSidebarWidth><![CDATA[276.000000]]></SourceSidebarWidth>
         <uid><![CDATA[DFBCE67B-7853-422D-B1E2-A3C5E9898DB6]]></uid>
-        <windowHeight><![CDATA[832.000000]]></windowHeight>
-        <windowLocationX><![CDATA[0.000000]]></windowLocationX>
-        <windowLocationY><![CDATA[0.000000]]></windowLocationY>
+        <windowHeight><![CDATA[900.000000]]></windowHeight>
+        <windowLocationX><![CDATA[205.000000]]></windowLocationX>
+        <windowLocationY><![CDATA[226.000000]]></windowLocationY>
         <windowWidth><![CDATA[1440.000000]]></windowWidth>
     </SQLDocumentInfo>
     <AllowsIndexRenamingOnInsert><![CDATA[1]]></AllowsIndexRenamingOnInsert>
