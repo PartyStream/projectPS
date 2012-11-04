@@ -100,16 +100,20 @@ function updateUser(response,userObject,client)
   console.log('updating a user');
   // userObject = '{"firstName":"Test","lastName":"User","dob":"1900-01-01","id":"1"}';
   var user   = JSON.parse(userObject);
-  console.log(user);
   var query;
 
   query = client.query({
     name: 'update user',
-    text: "UPDATE users SET (first_name = $1,last_name = $2, dob = $3) WHERE id = $4",
+    text: "UPDATE users SET first_name = $1,last_name = $2, dob = $3 WHERE id = $4",
     values: [user.firstName, user.lastName, user.dob, user.id]
   });
   
-  query.on('end', function() { client.end(); });
+  // query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
+  
+  query.on('end', function(result) {
+    // console.log(result.command);
+    client.end();
+  });
 
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
