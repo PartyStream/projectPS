@@ -25,24 +25,23 @@
 **/
 function createUser(response,userObject,client)
 {
-    
-    var user   = JSON.parse(userObject);
+  var user   = JSON.parse(userObject);
 
-    console.log('Creating user:');
-    var query;
+  console.log('Creating user:');
+  var query;
 
-    query = client.query({
-      name: 'insert user',
-      text: "INSERT INTO users(username, password,date_created) values($1, $2,current_timestamp)",
-      values: [user.username, user.password]
-    });
-    
-    query.on('end', function() { client.end(); });
+  query = client.query({
+    name: 'insert user',
+    text: "INSERT INTO users(username, password,date_created,first_name,last_name,dob) values($1, $2,current_timestamp,$3,$4,$5)",
+    values: [user.username, user.password, user.firstName, user.lastName, user.dob]
+  });
+  
+  query.on('end', function() { client.end(); });
 
-    // Send response to client
-    response.writeHead(200,{"Content-Type":"text/plain"});
-    response.write("Create User! ");
-    response.end();
+  // Send response to client
+  response.writeHead(200,{"Content-Type":"text/plain"});
+  response.write("Create User! ");
+  response.end();
     
 }// END function createUser
 exports.createUser = createUser;
@@ -62,23 +61,23 @@ exports.createUser = createUser;
 **/
 function readUser(response,userId,client)
 {
-    console.log('Reading user: ' + userId);
+  console.log('Reading user: ' + userId);
 
-    var query;
+  var query;
 
-    query = client.query({
-      name: 'insert user',
-      text: "SELECT * from users where id = $1",
-      values: [userId]
-    });
+  query = client.query({
+    name: 'read user',
+    text: "SELECT * from users where id = $1",
+    values: [userId]
+  });
 
-    // return the user retrieved
-    query.on('row', function(row) {
-        var json = JSON.stringify(row);
-        console.log(json);
-        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-        response.end(json);
-    });
+  // return the user retrieved
+  query.on('row', function(row) {
+      var json = JSON.stringify(row);
+      console.log(json);
+      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+      response.end(json);
+  });
     
 }// END function readUser
 exports.readUser = readUser;
@@ -92,13 +91,30 @@ exports.readUser = readUser;
 +   \date  2012-10-14 21:46
 +   \param response    The response to return to the client
 +   \param userObject  The user data to update
++   \param client     (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
-function updateUser(response,userObject)
+function updateUser(response,userObject,client)
 {
-    // TODO update a user record
-    console.log('Updating a user');
+  console.log('updating a user');
+  // userObject = '{"firstName":"Test","lastName":"User","dob":"1900-01-01","id":"1"}';
+  var user   = JSON.parse(userObject);
+  console.log(user);
+  var query;
+
+  query = client.query({
+    name: 'update user',
+    text: "UPDATE users SET (first_name = $1,last_name = $2, dob = $3) WHERE id = $4",
+    values: [user.firstName, user.lastName, user.dob, user.id]
+  });
+  
+  query.on('end', function() { client.end(); });
+
+  // Send response to client
+  response.writeHead(200,{"Content-Type":"text/plain"});
+  response.write("User Updated!");
+  response.end();
     
 }// END function updateUser
 exports.updateUser = updateUser;
@@ -112,13 +128,14 @@ exports.updateUser = updateUser;
 +   \date  2012-10-14 21:48
 +   \param reponse    The response to return to the client
 +   \param userId     The ID of the user to delete
++   \param client     (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
-function deleteUser(reponse,userId)
+function deleteUser(reponse,userId,client)
 {
-    // TODO delete a user record
-    console.log('Deleting a user');
+  // TODO delete a user record
+  console.log('Deleting a user');
     
 }// END function deleteUser
 exports.deleteUser = deleteUser;
