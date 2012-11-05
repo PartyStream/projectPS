@@ -31,14 +31,6 @@ client.connect();
 
 var app = express();
 
-// testVars
-var testUserObject         = {};
-testUserObject['username'] = "userone";
-testUserObject['password'] = "12345";
-testUserObject['lang']     = "eng";
-
-console.log(JSON.stringify(testUserObject));
-
 // Config
 app.configure(function () {
   app.use(express.bodyParser());
@@ -74,10 +66,15 @@ app.post('/user', function (req,res){
 app.get('/user/:id', function (req,res) {
     user.readUser(res,req.params.id,client);
 });
+// Update
 app.put('/user', function (req,res){
   user.updateUser(res,req.body.user,client);
 });
-// Update
+// Delete
+app.delete('/user/:id', function (req,res) {
+  user.deleteUser(res,req.params.id,client);
+});
+
 
 // Launch server
 
