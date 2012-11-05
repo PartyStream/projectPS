@@ -4,6 +4,7 @@ DROP TABLE users CASCADE;
 CREATE TABLE users
 (
 id SERIAL NOT NULL UNIQUE,
+status BIT,
 username VARCHAR(50) NOT NULL UNIQUE,
 password VARCHAR(50) NOT NULL,
 date_created TIMESTAMPTZ,
@@ -57,12 +58,12 @@ ALTER TABLE pictures ADD FOREIGN KEY (owner) REFERENCES users (id);
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
-INSERT INTO users(username,password,date_created,first_name,last_name,dob) VALUES('jsnow','test',current_timestamp,'Jon','Snow','1970-07-03');
-INSERT INTO users(username,password,date_created,first_name,last_name,dob) VALUES('edstark','test',current_timestamp,'Eddard','Stark','1970-07-03');
-INSERT INTO users(username,password,date_created,first_name,last_name,dob) VALUES('catstark','test',current_timestamp,'Catelyn','Stark','1970-07-03');
-INSERT INTO users(username,password,date_created,first_name,last_name,dob) VALUES('robstark','test',current_timestamp,'Robb','Stark','1970-07-03');
-INSERT INTO users(username,password,date_created,first_name,last_name,dob) VALUES('sanstark','test',current_timestamp,'Sansa','Stark','1970-07-03');
-INSERT INTO users(username,password,date_created,first_name,last_name,dob) VALUES('brastark','test',current_timestamp,'Bran','Stark','1970-07-03');
+INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','jsnow','test',current_timestamp,'Jon','Snow','1970-07-03');
+INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','edstark','test',current_timestamp,'Eddard','Stark','1970-07-03');
+INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','catstark','test',current_timestamp,'Catelyn','Stark','1970-07-03');
+INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','robstark','test',current_timestamp,'Robb','Stark','1970-07-03');
+INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','sanstark','test',current_timestamp,'Sansa','Stark','1970-07-03');
+INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','brastark','test',current_timestamp,'Bran','Stark','1970-07-03');
 
 
 
