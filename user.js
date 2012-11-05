@@ -27,7 +27,7 @@ function createUser(response,userObject,client)
 {
   var user   = JSON.parse(userObject);
 
-  console.log('Creating user:');
+  console.log('Creating user: ' + userObject);
   var query;
 
   query = client.query({
@@ -97,7 +97,7 @@ exports.readUser = readUser;
 **/
 function updateUser(response,userObject,client)
 {
-  console.log('updating a user');
+  console.log('updating user: ' + userObject);
   // userObject = '{"firstName":"Test","lastName":"User","dob":"1900-01-01","id":"1"}';
   var user   = JSON.parse(userObject);
   var query;
@@ -108,7 +108,7 @@ function updateUser(response,userObject,client)
     values: [user.firstName, user.lastName, user.dob, user.id]
   });
   
-  // query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
+  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
   
   query.on('end', function(result) {
     // console.log(result.command);
@@ -136,10 +136,27 @@ exports.updateUser = updateUser;
 +
 +   \return True if pass, False otherwise
 **/
-function deleteUser(reponse,userId,client)
+function deleteUser(response,userId,client)
 {
-  // TODO delete a user record
-  console.log('Deleting a user');
-    
+  console.log('Deleting user: ' + userId);
+
+  var query;
+
+  query = client.query({
+    name: 'delete user',
+    text: "UPDATE users SET status = '0' where id = $1",
+    values: [userId]
+  });
+
+  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
+  
+  query.on('end', function(result) {
+    // console.log(result.command);
+    client.end();
+  });
+
+  response.writeHead(200, {'content-type':'text/plain'});
+  response.write("User deleted!");
+  response.end();
 }// END function deleteUser
 exports.deleteUser = deleteUser;
