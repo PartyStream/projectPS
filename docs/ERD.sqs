@@ -112,7 +112,7 @@
         </location>
         <size>
             <width>192.00</width>
-            <height>180.00</height>
+            <height>200.00</height>
         </size>
         <zorder>0</zorder>
         <SQLField>
@@ -127,6 +127,12 @@
             <uid><![CDATA[C00CC658-C77B-48EF-986C-A5A405C86796]]></uid>
             <unique><![CDATA[1]]></unique>
             <unsigned><![CDATA[0]]></unsigned>
+        </SQLField>
+        <SQLField>
+            <name><![CDATA[status]]></name>
+            <type><![CDATA[BIT]]></type>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[4B6FE6C0-DFF9-46E9-AA02-3AACC3282958]]></uid>
         </SQLField>
         <SQLField>
             <name><![CDATA[username]]></name>
