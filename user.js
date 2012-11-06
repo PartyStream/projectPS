@@ -83,6 +83,45 @@ function readUser(response,userId,client)
 exports.readUser = readUser;
 
 /**
++  \brief readUsers
++
++      This function will return all user objects to the client
++
++  \author Salvatore D'Agostino
++  \date  2012-11-05 20:47
++  \param response  The response to return to the client
++  \param client  (PSQL) PSQL client object
++
++  \return JSON ARRAY of all user objects, False otherwise
+**/
+function readUsers(response,client)
+{
+  console.log('Getting all users');
+
+  var query, result;
+
+  query = client.query({
+    name: 'read users',
+    text: "SELECT * from users"
+  });
+
+   // return the user retrieved
+  query.on('row', function(row,result) {
+      result.addRow(row);
+  });
+
+  query.on('end', function() {
+    console.dir(result);
+    var json = JSON.stringify(result);
+    console.log(json);
+    response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+    response.end(json);
+  });
+  
+}// END function readUsers
+exports.readUsers = readUsers;
+
+/**
 +   \brief updateUser
 +
 +       This function will update a user object details
