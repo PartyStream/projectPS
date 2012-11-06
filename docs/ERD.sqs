@@ -4,8 +4,8 @@
         <name><![CDATA[events]]></name>
         <schema><![CDATA[]]></schema>
         <location>
-            <x>384.00</x>
-            <y>64.00</y>
+            <x>448.00</x>
+            <y>256.00</y>
         </location>
         <size>
             <width>192.00</width>
@@ -43,16 +43,31 @@
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
             <uid><![CDATA[95A6B6BB-04E5-419A-A1D3-13CDCACFFEAB]]></uid>
         </SQLField>
+        <SQLField>
+            <name><![CDATA[date_created]]></name>
+            <type><![CDATA[TIMESTAMPTZ]]></type>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[13F2EB9E-FE4B-4657-8748-94B6F4447F5F]]></uid>
+            <unsigned><![CDATA[1]]></unsigned>
+        </SQLField>
+        <SQLField>
+            <name><![CDATA[last_modified]]></name>
+            <type><![CDATA[TIMESTAMPTZ]]></type>
+            <defaultValue><![CDATA[NOW()]]></defaultValue>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[7F4DA402-4B24-4183-8C8E-3C35441C5456]]></uid>
+        </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
         <labelWindowIndex><![CDATA[3]]></labelWindowIndex>
+        <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[24A8E90A-8F14-4CDA-AE38-1B8C3E52AC42]]></uid>
     </SQLTable>
     <SQLTable>
         <name><![CDATA[pictures]]></name>
         <schema><![CDATA[]]></schema>
         <location>
-            <x>384.00</x>
-            <y>256.00</y>
+            <x>448.00</x>
+            <y>64.00</y>
         </location>
         <size>
             <width>192.00</width>
@@ -99,16 +114,24 @@
             <notNull><![CDATA[1]]></notNull>
             <uid><![CDATA[5D391147-859E-472D-98AC-DB16680818FD]]></uid>
         </SQLField>
+        <SQLField>
+            <name><![CDATA[date_created]]></name>
+            <type><![CDATA[TIMESTAMPTZ]]></type>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[3C80BF3A-47E1-460B-B0B0-A2B00EE99320]]></uid>
+            <unsigned><![CDATA[1]]></unsigned>
+        </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
         <labelWindowIndex><![CDATA[2]]></labelWindowIndex>
+        <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[392AD69F-D6DE-42EF-9FF4-2B94B7382297]]></uid>
     </SQLTable>
     <SQLTable>
         <name><![CDATA[users]]></name>
         <schema><![CDATA[]]></schema>
         <location>
-            <x>64.00</x>
-            <y>64.00</y>
+            <x>128.00</x>
+            <y>256.00</y>
         </location>
         <size>
             <width>192.00</width>
@@ -187,14 +210,58 @@
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
         <labelWindowIndex><![CDATA[1]]></labelWindowIndex>
         <temporaryOriginalName><![CDATA[Table1]]></temporaryOriginalName>
+        <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[601F8210-2994-4292-84B1-B4686E798A06]]></uid>
+    </SQLTable>
+    <SQLTable>
+        <name><![CDATA[event_users]]></name>
+        <schema><![CDATA[]]></schema>
+        <location>
+            <x>448.00</x>
+            <y>512.00</y>
+        </location>
+        <size>
+            <width>192.00</width>
+            <height>128.00</height>
+        </size>
+        <zorder>4</zorder>
+        <SQLField>
+            <name><![CDATA[event_id]]></name>
+            <type><![CDATA[INTEGER]]></type>
+            <referencesField>id</referencesField>
+            <referencesTable>events</referencesTable>
+            <referencesField><![CDATA[id]]></referencesField>
+            <referencesTable><![CDATA[events]]></referencesTable>
+            <sourceCardinality>0</sourceCardinality>
+            <destinationCardinality>0</destinationCardinality>
+            <referencesFieldUID><![CDATA[5DA195FD-BDD7-44CE-9500-49F0072956C5]]></referencesFieldUID>
+            <referencesTableUID><![CDATA[24A8E90A-8F14-4CDA-AE38-1B8C3E52AC42]]></referencesTableUID>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[FB4D30DD-B353-4F68-825C-7A55D9B9D101]]></uid>
+        </SQLField>
+        <SQLField>
+            <name><![CDATA[user_id]]></name>
+            <type><![CDATA[INTEGER]]></type>
+            <referencesField>id</referencesField>
+            <referencesTable>users</referencesTable>
+            <referencesField><![CDATA[id]]></referencesField>
+            <referencesTable><![CDATA[users]]></referencesTable>
+            <sourceCardinality>0</sourceCardinality>
+            <destinationCardinality>0</destinationCardinality>
+            <referencesFieldUID><![CDATA[C00CC658-C77B-48EF-986C-A5A405C86796]]></referencesFieldUID>
+            <referencesTableUID><![CDATA[601F8210-2994-4292-84B1-B4686E798A06]]></referencesTableUID>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[B93B678D-101E-48EC-91C5-6E322CF70A92]]></uid>
+        </SQLField>
+        <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+        <uid><![CDATA[69C1EA48-461F-4C12-8577-AA7337E44431]]></uid>
     </SQLTable>
     <SQLTable>
         <name><![CDATA[picture_events]]></name>
         <schema><![CDATA[]]></schema>
         <location>
-            <x>640.00</x>
-            <y>192.00</y>
+            <x>832.00</x>
+            <y>256.00</y>
         </location>
         <size>
             <width>192.00</width>
@@ -231,6 +298,7 @@
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
         <labelWindowIndex><![CDATA[0]]></labelWindowIndex>
+        <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[9052622F-BDC9-4FB0-88FF-E098AD140A19]]></uid>
     </SQLTable>
     <SQLDocumentInfo>

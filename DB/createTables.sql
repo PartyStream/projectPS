@@ -1,6 +1,11 @@
 /* SQLEditor (Postgres)*/
 
+DROP TABLE pictures CASCADE;
+DROP TABLE picture_events CASCADE;
+DROP TABLE events CASCADE;
 DROP TABLE users CASCADE;
+DROP TABLE event_users CASCADE;
+
 CREATE TABLE users
 (
 id SERIAL NOT NULL UNIQUE,
@@ -15,30 +20,36 @@ dob DATE,
 PRIMARY KEY (id)
 );
 
-DROP TABLE picture_events CASCADE;
 CREATE TABLE picture_events
 (
 event_id INTEGER,
 picture_id INTEGER
 );
 
-DROP TABLE events CASCADE;
 CREATE TABLE events
 (
 id SERIAL NOT NULL UNIQUE,
 name VARCHAR(50),
 creator INTEGER,
+date_created TIMESTAMPTZ,
+last_modified TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
 );
 
-DROP TABLE pictures CASCADE;
 CREATE TABLE pictures
 (
 id SERIAL NOT NULL UNIQUE,
 name VARCHAR(50),
 owner INTEGER,
 path VARCHAR(100) NOT NULL,
+date_created TIMESTAMPTZ,
 PRIMARY KEY (id)
+);
+
+CREATE TABLE event_users
+(
+event_id INTEGER,
+user_id INTEGER
 );
 
 CREATE INDEX users_username_idx ON users(username);
@@ -50,6 +61,10 @@ ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id)
 ALTER TABLE events ADD FOREIGN KEY (creator) REFERENCES users (id);
 
 ALTER TABLE pictures ADD FOREIGN KEY (owner) REFERENCES users (id);
+
+ALTER TABLE event_users ADD FOREIGN KEY (event_id) REFERENCES events (id);
+
+ALTER TABLE event_users ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
