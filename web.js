@@ -24,7 +24,7 @@ var application_root = __dirname,
       host: 'ec2-54-243-38-139.compute-1.amazonaws.com',
       port: 5432
     });
-    // console.dir(process.env.DATABASE_URL); return 1;
+    // console.dir(process.env); return 1;
 
 // Connect To DB
 client.connect();
@@ -43,6 +43,7 @@ app.configure(function () {
 /*
     app.post(/object)          (create)
     app.get(/object/:id)       (read)
+    app.get(/object)           (read all)
     app.put(/object/:id)       (update)
     app.delete(/object/:id)    (remove)
 */
@@ -62,9 +63,13 @@ app.get('/api', function (req, res) {
 app.post('/user', function (req,res){
   user.createUser(res,req.body.user,client);
 });
-// Read
+// Read User
 app.get('/user/:id', function (req,res) {
     user.readUser(res,req.params.id,client);
+});
+// Read Users
+app.get('/user', function (req,res) {
+    user.readUsers(res,client);
 });
 // Update
 app.put('/user', function (req,res){
