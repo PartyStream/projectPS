@@ -85,13 +85,13 @@ exports.readEvent = readEvent;
 /**
 +   \brief updateEvent
 +
-+       This function will update a event object details
++       This function will update an event by adding users to it
 +
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:46
-+   \param response    The response to return to the client
++   \param response     The response to return to the client
 +   \param eventObject  The event data to update
-+   \param client     (PSQL) PSQL client object
++   \param client       (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
@@ -101,10 +101,12 @@ function updateEvent(response,eventObject,client)
   var event   = JSON.parse(eventObject);
   var query;
 
+  // TODO - insert multiple rows here (use loop?)
+
   query = client.query({
     name: 'update event',
-    text: "UPDATE events SET first_name = $1,last_name = $2, dob = $3 WHERE id = $4",
-    values: [event.firstName, event.lastName, event.dob, event.id]
+    text: "INSERT INTO event_users",
+    values: [event.id, event.lastName, event.dob, event.id]
   });
   
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
