@@ -27,13 +27,14 @@ function createUser(response,userObject,client)
 {
   var user   = JSON.parse(userObject);
 
-  console.log('Creating user: ' + userObject);
+  console.log('Creating user');
+  console.dir(user);
   var query;
 
   query = client.query({
     name: 'insert user',
     text: "INSERT INTO users(username, password,date_created,first_name,last_name,dob) values($1, $2,current_timestamp,$3,$4,$5)",
-    values: [user.username, user.password, user.firstName, user.lastName, user.dob]
+    values: [user.username, user.password, user.first_name, user.last_name, user.dob]
   });
   
   query.on('end', function() { client.end(); });
