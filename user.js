@@ -98,7 +98,8 @@ function readUsers(response,client)
 {
   console.log('Getting all users');
 
-  var query, result;
+  var query;
+  var data = [];
 
   query = client.query({
     name: 'read users',
@@ -106,13 +107,13 @@ function readUsers(response,client)
   });
 
    // return the user retrieved
-  query.on('row', function(row,result) {
-      result.addRow(row);
+  query.on('row', function(row) {
+      data.push(row);
   });
 
   query.on('end', function() {
-    console.dir(result);
-    var json = JSON.stringify(result);
+    client.end();
+    var json = JSON.stringify(data);
     console.log(json);
     response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
     response.end(json);
