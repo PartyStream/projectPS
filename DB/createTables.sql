@@ -73,6 +73,7 @@ ALTER TABLE event_users ADD FOREIGN KEY (user_id) REFERENCES users (id);
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
+-- USERS
 INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','jsnow','test',current_timestamp,'Jon','Snow','1970-07-03');
 INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','edstark','test',current_timestamp,'Eddard','Stark','1970-07-03');
 INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','catstark','test',current_timestamp,'Catelyn','Stark','1970-07-03');
@@ -80,6 +81,12 @@ INSERT INTO users(status,username,password,date_created,first_name,last_name,dob
 INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','sanstark','test',current_timestamp,'Sansa','Stark','1970-07-03');
 INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','brastark','test',current_timestamp,'Bran','Stark','1970-07-03');
 
+-- EVENTS
+INSERT INTO events(name,creator,date_created) VALUES('Winterfell','2',current_timestamp);
+INSERT INTO events(name,creator,date_created) VALUES('King''s Landing','2',current_timestamp);
+INSERT INTO events(name,creator,date_created) VALUES('The Wall','2',current_timestamp);
+INSERT INTO events(name,creator,date_created) VALUES('Braavos','2',current_timestamp);
+INSERT INTO events(name,creator,date_created) VALUES('Riv','2',current_timestamp);
 
 
 
