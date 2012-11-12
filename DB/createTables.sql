@@ -49,7 +49,8 @@ PRIMARY KEY (id)
 CREATE TABLE event_users
 (
 event_id INTEGER,
-user_id INTEGER
+user_id INTEGER,
+permission INT2 NOT NULL DEFAULT 2
 );
 
 CREATE INDEX users_username_idx ON users(username);
