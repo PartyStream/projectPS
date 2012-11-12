@@ -37,6 +37,7 @@ function createUser(response,userObject,client)
     values: [user.username, user.password, user.first_name, user.last_name, user.dob]
   });
   
+  // TODO - add error handling so app doesn't crash
   // query.on('end', function() { client.end(); });
 
   // Send response to client
