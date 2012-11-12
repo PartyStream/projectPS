@@ -37,7 +37,7 @@ function createUser(response,userObject,client)
     values: [user.username, user.password, user.first_name, user.last_name, user.dob]
   });
   
-  query.on('end', function() { client.end(); });
+  // query.on('end', function() { client.end(); });
 
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
@@ -113,7 +113,7 @@ function readUsers(response,client)
   });
 
   query.on('end', function() {
-    client.end();
+    // client.end();
     var json = JSON.stringify(data);
     console.log(json);
     response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
@@ -151,10 +151,10 @@ function updateUser(response,userObject,client)
   
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
   
-  query.on('end', function(result) {
-    // console.log(result.command);
-    client.end();
-  });
+  // query.on('end', function(result) {
+  //   // console.log(result.command);
+  //   client.end();
+  // });
 
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
@@ -191,10 +191,10 @@ function deleteUser(response,userId,client)
 
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
   
-  query.on('end', function(result) {
-    // console.log(result.command);
-    client.end();
-  });
+  // query.on('end', function(result) {
+  //   // console.log(result.command);
+  //   client.end();
+  // });
 
   response.writeHead(200, {'content-type':'text/plain'});
   response.write("User deleted!");
