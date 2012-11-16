@@ -15,6 +15,7 @@ var application_root = __dirname,
     path             = require("path"),
     url              = require("url") ,
     user             = require('./user'),
+    partyEvent       = require('./event'),
     pg               = require('pg').native,
     // client           = new pg.Client(process.env.DATABASE_URL);
     client           = new pg.Client({
@@ -80,6 +81,29 @@ app.delete('/user/:id', function (req,res) {
   user.deleteUser(res,req.params.id,client);
 });
 
+/**
++++++++++++++++++++++++++++++++++++++++++++++++++++
++++                                             +++
++                  Event Object                   +
++++                                             +++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+**/
+// Create
+app.post('/event', function (req,res){
+  partyEvent.createEvent(res,req.body.partyEvent,client);
+});
+// Read User
+app.get('/event/:id', function (req,res) {
+    partyEvent.readEvent(res,req.params.id,client);
+});
+// Update
+app.put('/event', function (req,res){
+  partyEvent.updateEvent(res,req.body.partyEvent,client);
+});
+// Delete
+app.delete('/event/:id', function (req,res) {
+  partyEvent.deleteEvent(res,req.params.id,client);
+});
 
 // Launch server
 
