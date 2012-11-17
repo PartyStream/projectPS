@@ -36,7 +36,7 @@ function createEvent(response,eventObject,client)
     values: [event.name, event.userId]
   });
   
-  query.on('end', function() { client.end(); });
+  query.on('end', function() {  });
 
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
@@ -98,22 +98,24 @@ exports.readEvent = readEvent;
 function updateEvent(response,eventObject,client)
 {
   console.log('updating event: ' + eventObject);
-  var event   = JSON.parse(eventObject);
+  var eventUsers   = JSON.parse(eventObject);
   var query;
 
-  // TODO - insert multiple rows here (use loop?)
+  for (var i = eventUsers.length - 1; i >= 0; i--)
+  {
+    console.dir(eventUsers[i]);
+    query = client.query({
+      name: 'update event',
+      text: "INSERT INTO event_users (event_id,user_id) values ($1,$2)",
+      values: [eventUsers[i].event_id, eventUsers[i].user_id]
+    });
+    
+  }
 
-  query = client.query({
-    name: 'update event',
-    text: "INSERT INTO event_users",
-    values: [event.id, event.lastName, event.dob, event.id]
-  });
-  
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
   
   query.on('end', function(result) {
     // console.log(result.command);
-    client.end();
   });
 
   // Send response to client
@@ -153,7 +155,6 @@ function deleteEvent(response,eventId,client)
   
   query.on('end', function(result) {
     // console.log(result.command);
-    client.end();
   });
 
   response.writeHead(200, {'content-type':'text/plain'});
