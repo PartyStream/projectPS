@@ -36,6 +36,8 @@ function createUser(response,userObject,client)
     text: "INSERT INTO users(username, password,date_created,first_name,last_name,dob) values($1, $2,current_timestamp,$3,$4,$5)",
     values: [user.username, user.password, user.first_name, user.last_name, user.dob]
   });
+
+  query.on('error',function(err) { console.log('Unable to create user: '+ err); } );
   
   // TODO - add error handling so app doesn't crash
   // query.on('end', function() { client.end(); });
@@ -73,13 +75,32 @@ function readUser(response,userId,client)
     values: [userId]
   });
 
+  
   // return the user retrieved
-  query.on('row', function(row) {
-      var json = JSON.stringify(row);
-      console.log(json);
-      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-      response.end(json);
+  query.on('row', function(row)
+  {
+    console.log("Hello World");
+    var json;
+    if (row !== null)
+    {
+      console.log("User Found");
+      console.dir(row);
+      json = JSON.stringify(row);
+    }
+    else
+    {
+      console.log("User Not Found");
+      json = "User not found";
+    }
+    
+
+    console.log(json);
+    response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+    response.end(json);
   });
+
+  query.on('error',function(err) { console.log('Unable to read a user: '+ err); } );
+  
     
 }// END function readUser
 exports.readUser = readUser;
@@ -120,6 +141,8 @@ function readUsers(response,client)
     response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
     response.end(json);
   });
+
+  query.on('error',function(err) { console.log('Unable to read a user: '+ err); } );
   
 }// END function readUsers
 exports.readUsers = readUsers;
