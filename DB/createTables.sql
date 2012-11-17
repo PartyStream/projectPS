@@ -29,6 +29,7 @@ picture_id INTEGER
 CREATE TABLE events
 (
 id SERIAL NOT NULL UNIQUE,
+status BIT,
 name VARCHAR(50),
 creator INTEGER,
 date_created TIMESTAMPTZ,
@@ -83,11 +84,11 @@ INSERT INTO users(status,username,password,date_created,first_name,last_name,dob
 INSERT INTO users(status,username,password,date_created,first_name,last_name,dob) VALUES('1','brastark','test',current_timestamp,'Bran','Stark','1970-07-03');
 
 -- EVENTS
-INSERT INTO events(name,creator,date_created) VALUES('Winterfell','2',current_timestamp);
-INSERT INTO events(name,creator,date_created) VALUES('King''s Landing','2',current_timestamp);
-INSERT INTO events(name,creator,date_created) VALUES('The Wall','2',current_timestamp);
-INSERT INTO events(name,creator,date_created) VALUES('Braavos','2',current_timestamp);
-INSERT INTO events(name,creator,date_created) VALUES('Riv','2',current_timestamp);
+INSERT INTO events(name,status,creator,date_created) VALUES('Winterfell','1','2',current_timestamp);
+INSERT INTO events(name,status,creator,date_created) VALUES('King''s Landing','1','2',current_timestamp);
+INSERT INTO events(name,status,creator,date_created) VALUES('The Wall','1','2',current_timestamp);
+INSERT INTO events(name,status,creator,date_created) VALUES('Braavos','1','2',current_timestamp);
+INSERT INTO events(name,status,creator,date_created) VALUES('Riv','1','2',current_timestamp);
 
 
 
