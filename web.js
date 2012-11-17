@@ -12,6 +12,7 @@
 
 var application_root = __dirname,
     express          = require("express"),
+    port             = process.env.PORT || 4482;
     path             = require("path"),
     url              = require("url") ,
     user             = require('./user'),
@@ -107,4 +108,4 @@ app.delete('/event/:id', function (req,res) {
 
 // Launch server
 
-app.listen(4482);
+app.listen(port);
