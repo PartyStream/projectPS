@@ -39,9 +39,6 @@ function createUser(response,userObject,client)
 
   query.on('error',function(err) { console.log('Unable to create user: '+ err); } );
   
-  // TODO - add error handling so app doesn't crash
-  // query.on('end', function() { client.end(); });
-
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
   response.write("Create User! ");
