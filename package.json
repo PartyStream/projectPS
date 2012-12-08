@@ -1,9 +1,11 @@
 {
-  "name": "node-example",
+  "name": "projectPS",
   "version": "0.0.1",
   "dependencies": {
     "express": "latest",
-    "pg": "latest"
+    "pg": "latest",
+    "aws-sdk": "latest"
+
   },
   "engines": {
     "node": "0.8.x",
