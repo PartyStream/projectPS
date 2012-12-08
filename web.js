@@ -18,15 +18,9 @@ var application_root = __dirname,
     user             = require('./user'),
     partyEvent       = require('./event'),
     pg               = require('pg').native,
-    // client           = new pg.Client(process.env.DATABASE_URL);
-    client           = new pg.Client({
-      user: 'ywvaxcfcyvqipg',
-      password: 'rrKizy0m_X1TeNhAQj8lXsZ1mQ',
-      database: 'deqbs2oph32c36',
-      host: 'ec2-54-243-38-139.compute-1.amazonaws.com',
-      port: 5432
-    });
-    // console.dir(process.env); return 1;
+    AWS              = require('aws-sdk');
+    client           = new pg.Client(process.env.DATABASE_URL);
+    // console.log(process.env.DATABASE_URL); return 1;
 
 // Connect To DB
 client.connect();
