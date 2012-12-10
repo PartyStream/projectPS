@@ -17,15 +17,15 @@
 +
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:41
-+   \param response   The reponse to return to the client
-+   \param eventObject (JSON) The event data to insert
-+   \param client     (PSQL) PSQL client object
++   \param response     (CONN)  The reponse to return to the client
++   \param eventObject  (JSON)  The event data to insert
++   \param client       (PSQL)  PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
 function createEvent(response,eventObject,client)
 {
-  var event   = JSON.parse(eventObject);
+  var event = JSON.parse(eventObject);
 
   console.log('Creating event: ' + eventObject);
   var query;
@@ -42,7 +42,6 @@ function createEvent(response,eventObject,client)
   response.writeHead(200,{"Content-Type":"text/plain"});
   response.write("Created Event! ");
   response.end();
-    
 }// END function createEvent
 exports.createEvent = createEvent;
 
