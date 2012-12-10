@@ -3,7 +3,7 @@
 //  user.js
 //  projectPS
 //
-//    This is the User Model of the PhotoStream project
+//    This is the User Model of the PartyStream project
 //
 //  Created by Salvatore D'Agostino on 2012-10-14 21:33
 //  Copyright 2012. All rights reserved.
