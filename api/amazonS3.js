@@ -10,6 +10,57 @@
 //
 **/
 
+/**
++   \brief createBucket
++
++       This function will create a bucket in amazon S3
++
++   \author Salvatore D'Agostino
++   \date  2012-12-09 15:58
++   \param s3         (CONN)    The contents of the file
++   \param bucketName (STRING)  The name of the bucket
++   \param callBack   (FUNC)    callback function
++
++   \return True if pass, False otherwise
+**/
+function createBucket(s3,bucketName,callBack)
+{
+    s3.client.createBucket({Bucket: bucketName}).done(function(resp) {
+      console.log("S3 SUCCESS: Bucket "+bucketName+" CREATED!");
+      callBack(true);
+    }).fail(function(resp) {
+      console.log(resp.error);
+      callBack(false);
+    });
+    
+}// END function createBucket
+exports.createBucket = createBucket;
+
+/**
++   \brief createFolder
++
++       This function will create a folder in a given bucket
++
++   \author Salvatore D'Agostino
++   \date  2012-12-09 16:44
++   \param s3           (CONN)    The contents of the file
++   \param bucketName   (STRING)  The name of the bucket
++   \param folderName   (STRING)  The name of the folder
++   \param callBack     (FUNC)    callback function
++
++   \return True if pass, False otherwise
+**/
+// function createFolder(s3,bucketName,folderName,callBack)
+// {
+//     var data = {Bucket: bucketName, Key: "projectPS/test"};
+
+//     s3.client.putObject(data).done(function(resp) {
+//         console.log("Successfully uploaded data to myBucket/myKey");
+//         callBack(true);
+//     });
+    
+// }// END function createFolder
+// exports.createFolder = createFolder;
 
 /**
 +   \brief upload
