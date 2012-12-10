@@ -17,6 +17,7 @@ var application_root = __dirname,
     url              = require("url") ,
     user             = require('./user'),
     partyEvent       = require('./event'),
+    pictures         = require('./pictures'),
     pg               = require('pg').native,
     AWS              = require('aws-sdk'),
     client           = new pg.Client(process.env.DATABASE_URL);
@@ -25,10 +26,6 @@ AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: pro
 AWS.config.update({region: 'us-east-1'});
 
 var s3 = new AWS.S3();
-var data = {Bucket: 'projectPS', Key: 'Hello', Body: 'WORLD!'};
-s3.client.putObject(data).done(function(resp) {
-    console.log("Successfully uploaded data to myBucket/myKey");
-  });
 
 // console.log(process.env.DATABASE_URL); return 1;
 
@@ -108,6 +105,18 @@ app.put('/event', function (req,res){
 // Delete
 app.delete('/event/:id', function (req,res) {
   partyEvent.deleteEvent(res,req.params.id,client);
+});
+
+/**
++++++++++++++++++++++++++++++++++++++++++++++++++++
++++                                             +++
++                  Pictures Object
++++                                             +++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+**/
+// Create
+app.post('/pictures', function (req,res){
+  partyEvent.createEvent(res,req.files.picture,s3);
 });
 
 // Launch server
