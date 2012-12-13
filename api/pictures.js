@@ -31,7 +31,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
 {
     var awsS3 = require('./amazonS3');
 
-    // TODO create record in DB for picture and get back ID
+    // create record in DB for picture and get back ID
     console.log('Inserting image into DB');
 
     query = client.query({
@@ -54,7 +54,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
         pictureId = row;
         console.log('Inserted picture ID: '+pictureId.id);
 
-        // TODO Create event relation in picture_events join table
+        // Create event relation in picture_events join table
         console.log('Creating relation between picture and event');
         query = client.query({
           name: 'insert picture_events',
@@ -71,13 +71,11 @@ function createPicture(response,eventId,creator,picture,s3,client)
         });
 
         query.on('row', function(row) { });
+
+        // TODO use ID as filename to upload to S3
+        // awsS3.upload(s3,process.env.S3_BUCKET_NAME,pictureId.id,); // <-- not sure what to pass as the file contents
+
     });
-
-    
-
-    // TODO use ID as filename to upload to S3
-
-    // code
 
     // Send response to client
     response.writeHead(200,{"Content-Type":"text/plain"});
