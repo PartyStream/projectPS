@@ -108,13 +108,6 @@
             <uid><![CDATA[2E15AF4B-7E4B-43E1-964E-E6CA899430D6]]></uid>
         </SQLField>
         <SQLField>
-            <name><![CDATA[path]]></name>
-            <type><![CDATA[VARCHAR(100)]]></type>
-            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
-            <notNull><![CDATA[1]]></notNull>
-            <uid><![CDATA[5D391147-859E-472D-98AC-DB16680818FD]]></uid>
-        </SQLField>
-        <SQLField>
             <name><![CDATA[date_created]]></name>
             <type><![CDATA[TIMESTAMPTZ]]></type>
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
@@ -465,7 +458,7 @@ Z2luhpKEo56ooTSGkoSZmQ9OU1NjYWxpbmdGYWN0b3KGkoSjnqihAYaShJmZC05T
 UGFwZXJOYW1lhpKEmZkJbmEtbGV0dGVyhoaG
 ]]></encodedPrintInfo>
         <autoSizeTablesOption><![CDATA[0]]></autoSizeTablesOption>
-        <documentScaleFactor><![CDATA[1]]></documentScaleFactor>
+        <documentScaleFactor><![CDATA[0.968]]></documentScaleFactor>
         <exportDialect><![CDATA[postgres]]></exportDialect>
         <fileversion><![CDATA[3.1]]></fileversion>
         <generator><![CDATA[com.malcolmhardie.sqleditor]]></generator>
