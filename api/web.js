@@ -115,8 +115,8 @@ app.delete('/event/:id', function (req,res) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/pictures', function (req,res){
-  partyEvent.createEvent(res,req.files.picture,s3);
+app.post('/picture', function (req,res){
+  pictures.createPicture(res,req.body.eventId,req.body.userId,req.files.picture,s3,client);
 });
 
 // Launch server
