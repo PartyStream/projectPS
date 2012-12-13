@@ -52,9 +52,28 @@ function createPicture(response,eventId,creator,picture,s3,client)
     // return the id of the picture inserted
     query.on('row', function(row) {
         pictureId = row;
-        console.log("Picture ID: "+pictureId);
+        console.log('Inserted picture ID: '+pictureId.id);
+
+        // TODO Create event relation in picture_events join table
+        console.log('Creating relation between picture and event');
+        query = client.query({
+          name: 'insert picture_events',
+          text: "INSERT INTO picture_events (picture_id,event_id) values ($1,$2)",
+          values: [pictureId.id, eventId]
+        });
+
+        query.on('error',function(err) {
+            console.log('DB Error Caught: '+ err);
+            // Send response to client
+            response.writeHead(200,{"Content-Type":"text/plain"});
+            response.write("Could not upload picture");
+            response.end();
+        });
+
+        query.on('row', function(row) { });
     });
 
+    
 
     // TODO use ID as filename to upload to S3
 
