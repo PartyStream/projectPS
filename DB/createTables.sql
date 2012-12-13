@@ -22,14 +22,13 @@ PRIMARY KEY (id)
 
 CREATE TABLE picture_events
 (
-event_id INTEGER,
-picture_id INTEGER
+picture_id INTEGER,
+event_id INTEGER
 );
 
 CREATE TABLE events
 (
 id SERIAL NOT NULL UNIQUE,
-status BIT,
 name VARCHAR(50),
 creator INTEGER,
 date_created TIMESTAMPTZ,
@@ -42,7 +41,6 @@ CREATE TABLE pictures
 id SERIAL NOT NULL UNIQUE,
 name VARCHAR(50),
 owner INTEGER,
-path VARCHAR(100) NOT NULL,
 date_created TIMESTAMPTZ,
 PRIMARY KEY (id)
 );
@@ -56,9 +54,9 @@ permission INT2 NOT NULL DEFAULT 2
 
 CREATE INDEX users_username_idx ON users(username);
 
-ALTER TABLE picture_events ADD FOREIGN KEY (event_id) REFERENCES events (id);
-
 ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
+
+ALTER TABLE picture_events ADD FOREIGN KEY (event_id) REFERENCES events (id);
 
 ALTER TABLE events ADD FOREIGN KEY (creator) REFERENCES users (id);
 
