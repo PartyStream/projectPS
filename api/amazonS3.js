@@ -3,7 +3,7 @@
 //  fileName
 //  projectPS
 //
-//    This is the Amazon AWS S3 file storage
+//    This is the Amazon AWS S3 file storage module
 //
 //  Created by Salvatore D'Agostino on 2012-12-09 14:51
 //  Copyright 2012. All rights reserved.
@@ -71,12 +71,13 @@ exports.createBucket = createBucket;
 +   \date  2012-12-09 14:57
 +   \param s3       instance of aws connection
 +   \param bucket   the name of the bucket
++   \param eventId  the id of the event
 +   \param fileName the name of the file
 +   \param fileData the file contents
 +
 +   \return True if success, False otherwise
 **/
-function upload(s3,bucket,fileName,fileData)
+function upload(s3,bucket,eventId,fileName,fileData)
 {
     var data = {Bucket: bucket, Key: fileName, Body: fileData};
     
