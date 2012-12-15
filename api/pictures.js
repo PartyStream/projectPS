@@ -30,6 +30,7 @@
 function createPicture(response,eventId,creator,picture,s3,client)
 {
     var awsS3 = require('./amazonS3');
+    var fs    = require('fs');
 
     // create record in DB for picture and get back ID
     console.log('Inserting image into DB');
@@ -72,8 +73,30 @@ function createPicture(response,eventId,creator,picture,s3,client)
 
         query.on('row', function(row) { });
 
-        // TODO use ID as filename to upload to S3
-        // awsS3.upload(s3,process.env.S3_BUCKET_NAME,pictureId.id,); // <-- not sure what to pass as the file contents
+        console.log('Openning file');
+        
+        // use ID as filename to upload to S3
+        fs.readFile(picture.path,function(err,data) {
+            if(err)
+            {
+                console.log(err);
+
+                // Send response to client
+                response.writeHead(200,{"Content-Type":"text/plain"});
+                response.write("Could not upload picture");
+                response.end();
+            }
+            else
+            {
+                // TODO dynamically get file format
+                var fileName = pictureId.id + ".png";
+                console.log("FileName: " + fileName);
+                awsS3.upload(s3,process.env.S3_BUCKET_NAME,eventId,fileName,data);
+            }
+        });
+
+        console.log('File uploaded');
+
 
     });
 
