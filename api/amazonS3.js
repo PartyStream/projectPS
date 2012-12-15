@@ -79,11 +79,13 @@ exports.createBucket = createBucket;
 **/
 function upload(s3,bucket,eventId,fileName,fileData)
 {
-    var data = {Bucket: bucket, Key: fileName, Body: fileData};
-    
-    s3.client.putObject(data).done(function(resp) {
-        console.log("Successfully uploaded data to myBucket/myKey");
-    });
+  console.log('Uploading file: '+fileName);
+  var path = eventId + "/" + fileName;
+  var data = {Bucket: bucket, Key: path, Body: fileData};
+  
+  s3.client.putObject(data).done(function(resp) {
+      console.log("Successfully uploaded data to: " + path);
+  });
     
 }// END function upload
 exports.upload = upload;
