@@ -118,7 +118,10 @@ app.delete('/event/:id', function (req,res) {
 app.post('/picture', function (req,res){
   pictures.createPicture(res,req.body.eventId,req.body.userId,req.files.picture,s3,client);
 });
-
+// Read Pictures
+app.get('/pictures/:eventId', function (req,res) {
+    pictures.readPictures(res,req.params.eventId,client);
+});
 // Launch server
 
 app.listen(port);
