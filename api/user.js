@@ -76,7 +76,6 @@ function readUser(response,userId,client)
   // return the user retrieved
   query.on('row', function(row)
   {
-    console.log("Hello World");
     var json;
     if (row !== null)
     {
