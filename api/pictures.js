@@ -49,6 +49,8 @@ function createPicture(response,eventId,creator,picture,s3,client)
         response.end();
     });
 
+    // TODO update event updated field (timestamp)
+
     var pictureId;
     // return the id of the picture inserted
     query.on('row', function(row) {
@@ -107,3 +109,53 @@ function createPicture(response,eventId,creator,picture,s3,client)
     
 }// END function createPicture
 exports.createPicture = createPicture;
+
+/**
++   \brief readPictures
++
++       This function will return all picture objects for a given event
++
++   \author Salvatore D'Agostino
++   \date  2012-12-15 16:07
++   \param response   The response to return to the client
++   \param eventId    The ID of the event
++   \param client     (PSQL) PSQL client object
++
++   \return JSON ARRAY of all picture objects, False otherwise
+**/
+function readPictures(response,eventId,client)
+{
+    console.log('Getting all pictures for event: '+ eventId);
+
+    var query;
+    var data = [];
+    var sql =  "SELECT p.*,e.id AS event_id ";
+        sql += "FROM pictures p ";
+        sql += "JOIN picture_events pe ON p.id = pe.picture_id ";
+        sql += "JOIN events e ON e.id = pe.event_id ";
+        sql += "WHERE e.id = $1";
+
+    console.log("QUERY: "+sql);
+
+    query = client.query({
+        name: 'read pictures',
+        text: sql,
+        values: [eventId]
+    });
+
+     // return the pictures retrieved
+    query.on('row', function(row) {
+        data.push(row);
+    });
+
+    query.on('end', function() {
+      // client.end();
+      var json = JSON.stringify(data);
+      console.log(json);
+      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+      response.end(json);
+    });
+
+    query.on('error',function(err) { console.log('Unable to read pictures: '+ err); } );
+}// END function readPictures
+exports.readPictures = readPictures;
