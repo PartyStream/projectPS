@@ -89,3 +89,41 @@ function upload(s3,bucket,eventId,fileName,fileData)
     
 }// END function upload
 exports.upload = upload;
+
+/**
++   \brief download
++
++       This function will download a file from a bucket and send all the data
++       back to the client
++
++   \author Salvatore D'Agostino
++   \date  2012-12-22 00:43
++   \param s3       instance of aws connection
++   \param bucket   the name of the bucket
++   \param eventId  the id of the event
++   \param fileData all the file data
++
++   \return return
+**/
+function download(s3,bucket,eventId,fileData,response)
+{
+  console.log('Downloading file: '+fileData.id);
+  var path = eventId + "/" + fileData.id;
+  var file = {Bucket: bucket, Key: path};
+  
+  s3.client.getObject(file,function(err, data) {
+    console.log("File Data:");
+    console.log(data);
+
+    fileData.file = data;
+
+    // var json = JSON.stringify(data);
+    console.log(fileData);
+    response.writeHead(200, {'content-type':'application/json', 'content-length':fileData.length});
+    response.end(fileData);
+
+  });
+    
+}// END function download
+exports.download = download;
+
