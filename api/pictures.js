@@ -159,3 +159,53 @@ function readPictures(response,eventId,client)
     query.on('error',function(err) { console.log('Unable to read pictures: '+ err); } );
 }// END function readPictures
 exports.readPictures = readPictures;
+
+/**
++   \brief readPicture
++
++       This function sends back a single picture
++
++   \author Salvatore D'Agostino
++   \date  2012-12-22 00:14
++   \param response   (HTTP)    The response to return to the client
++   \param eventId    (INT)     The ID of the event
++   \param pictureId  (INT)     The ID of the picture
++   \param client     (PSQL)    PSQL client object
++   \param s3         (CONN)    The contents of the file
++
++   \return JSON ARRAY containing image data
+**/
+function readPicture(response,eventId,pictureId,client,s3)
+{
+    console.log('Getting picture: '+ pictureId);
+
+    var awsS3 = require('./amazonS3');
+    var query;
+    var data = [];
+    var sql =  "SELECT p.* ";
+        sql += "FROM pictures p ";
+        sql += "WHERE p.id = $1";
+
+    console.log("QUERY: "+sql);
+
+    query = client.query({
+        name: 'read pictures',
+        text: sql,
+        values: [pictureId]
+    });
+
+    // return the pictures retrieved
+    query.on('row', function(row) {
+        data.push(row);
+    });
+
+    query.on('end', function() {
+
+        // get image data from S3
+        awsS3.download(s3,process.env.S3_BUCKET_NAME,eventId,data,response);
+    });
+
+    query.on('error',function(err) { console.log('Unable to read pictures: '+ err); } );
+    
+}// END function readPicture
+exports.readPicture = readPicture;
