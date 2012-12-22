@@ -122,6 +122,10 @@ app.post('/picture', function (req,res){
 app.get('/pictures/:eventId', function (req,res) {
     pictures.readPictures(res,req.params.eventId,client);
 });
-// Launch server
+// Read A Picture
+app.get('/picture/:pictureId', function (req,res) {
+    pictures.readPicture(res,req.params.eventId,req.params.pictureId,client,s3);
+});
 
+// Launch server
 app.listen(port);
