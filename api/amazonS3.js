@@ -112,16 +112,20 @@ function download(s3,bucket,eventId,fileData,response)
   var file = {Bucket: bucket, Key: path};
   
   s3.client.getObject(file,function(err, data) {
-    console.log("File Data:");
-    console.log(data);
 
-    fileData.file = data;
+    if (err)
+    {
+      console.log(err);
+    }
+    else
+    {
+      fileData.file = data;
 
-    // var json = JSON.stringify(data);
-    console.log(fileData);
-    response.writeHead(200, {'content-type':'application/json', 'content-length':fileData.length});
-    response.end(fileData);
-
+      var json = JSON.stringify(fileData);
+      console.log(fileData);
+      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+      response.end(json);
+    }
   });
     
 }// END function download
