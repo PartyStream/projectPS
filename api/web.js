@@ -123,7 +123,7 @@ app.get('/pictures/:eventId', function (req,res) {
     pictures.readPictures(res,req.params.eventId,client);
 });
 // Read A Picture
-app.get('/picture/:pictureId', function (req,res) {
+app.get('/picture/:eventId/:pictureId', function (req,res) {
     pictures.readPicture(res,req.params.eventId,req.params.pictureId,client,s3);
 });
 
