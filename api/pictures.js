@@ -182,7 +182,7 @@ function readPicture(response,eventId,pictureId,client,s3)
     var awsS3 = require('./amazonS3');
     var query;
     var data = [];
-    var sql =  "SELECT p.* ";
+    var sql =  "SELECT CONCAT(p.id,'.png') AS id, p.name,p.date_created ";
         sql += "FROM pictures p ";
         sql += "WHERE p.id = $1";
 
@@ -200,9 +200,8 @@ function readPicture(response,eventId,pictureId,client,s3)
     });
 
     query.on('end', function() {
-
         // get image data from S3
-        awsS3.download(s3,process.env.S3_BUCKET_NAME,eventId,data,response);
+        awsS3.download(s3,process.env.S3_BUCKET_NAME,eventId,data[0],response);
     });
 
     query.on('error',function(err) { console.log('Unable to read pictures: '+ err); } );
