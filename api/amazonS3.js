@@ -32,7 +32,7 @@ function createBucket(s3,bucketName,callBack)
       console.log(resp.error);
       callBack(false);
     });
-    
+
 }// END function createBucket
 exports.createBucket = createBucket;
 
@@ -58,7 +58,7 @@ exports.createBucket = createBucket;
 //         console.log("Successfully uploaded data to myBucket/myKey");
 //         callBack(true);
 //     });
-    
+
 // }// END function createFolder
 // exports.createFolder = createFolder;
 
@@ -82,11 +82,11 @@ function upload(s3,bucket,eventId,fileName,fileData)
   console.log('Uploading file: '+fileName);
   var path = eventId + "/" + fileName;
   var data = {Bucket: bucket, Key: path, Body: fileData};
-  
+
   s3.client.putObject(data).done(function(resp) {
       console.log("Successfully uploaded data to: " + path);
   });
-    
+
 }// END function upload
 exports.upload = upload;
 
@@ -110,7 +110,7 @@ function download(s3,bucket,eventId,fileData,response)
   console.log('Downloading file: '+fileData.id);
   var path = eventId + "/" + fileData.id;
   var file = {Bucket: bucket, Key: path};
-  
+
   s3.client.getObject(file,function(err, data) {
 
     if (err)
@@ -127,7 +127,7 @@ function download(s3,bucket,eventId,fileData,response)
       response.end(json);
     }
   });
-    
+
 }// END function download
 exports.download = download;
 
