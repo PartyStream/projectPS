@@ -35,7 +35,7 @@ function createEvent(response,eventObject,client)
     text: "INSERT INTO events(name, creator,date_created) values($1, $2,current_timestamp)",
     values: [event.name, event.userId]
   });
-  
+
   query.on('end', function() {  });
 
   // Send response to client
@@ -77,9 +77,51 @@ function readEvent(response,eventId,client)
       response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
       response.end(json);
   });
-    
+
 }// END function readEvent
 exports.readEvent = readEvent;
+
+/**
++   \brief getEvents
++
++       This function will get all events a user is part of
++
++   \author Salvatore D'Agostino
++   \date  2013-04-08 20:51
++   \param response   The response to return to the user
++   \param userId     The ID of the user
++   \param client     (PSQL) PSQL client object
++
++   \return Array of even objects
+**/
+function getEvents(response,userId,client)
+{
+    console.log('Get all events for user: ' + userId);
+
+    var query;
+    var data = [];
+
+    query = client.query({
+      name: 'getEvents',
+      text: "SELECT * FROM events AS e JOIN event_users AS eu ON eu.event_id = e.id WHERE eu.user_id = $1",
+      values: [userId]
+    });
+
+     // return the user retrieved
+    query.on('row', function(row) {
+        data.push(row);
+    });
+
+    // return the event retrieved
+    query.on('end', function() {
+      // client.end();
+      var json = JSON.stringify(data);
+      console.log(json);
+      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+      response.end(json);
+    });
+}// END function getEvents
+exports.getEvents = getEvents;
 
 /**
 +   \brief updateEvent
@@ -108,11 +150,11 @@ function updateEvent(response,eventObject,client)
       text: "INSERT INTO event_users (event_id,user_id) values ($1,$2)",
       values: [eventUsers[i].event_id, eventUsers[i].user_id]
     });
-    
+
   }
 
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-  
+
   query.on('end', function(result) {
     // console.log(result.command);
   });
@@ -121,7 +163,7 @@ function updateEvent(response,eventObject,client)
   response.writeHead(200,{"Content-Type":"text/plain"});
   response.write("Event Updated!");
   response.end();
-    
+
 }// END function updateEvent
 exports.updateEvent = updateEvent;
 
@@ -151,7 +193,7 @@ function deleteEvent(response,eventId,client)
   });
 
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-  
+
   query.on('end', function(result) {
     // console.log(result.command);
   });
