@@ -94,9 +94,13 @@ app.delete('/user/:id', function (req,res) {
 app.post('/event', function (req,res){
   partyEvent.createEvent(res,req.body.partyEvent,client);
 });
-// Read User
+// Read Event
 app.get('/event/:id', function (req,res) {
     partyEvent.readEvent(res,req.params.id,client);
+});
+// Read Events
+app.get('/event_all/:id', function (req,res) {
+    partyEvent.getEvents(res,req.params.id,client);
 });
 // Update
 app.put('/event', function (req,res){
@@ -128,4 +132,5 @@ app.get('/picture/:eventId/:pictureId', function (req,res) {
 });
 
 // Launch server
+console.log('Listening on port: '+ port);
 app.listen(port);
