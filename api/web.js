@@ -55,6 +55,18 @@ app.get('/api', function (req, res) {
   res.send('PS API is running');
 });
 
+
+/**
++++++++++++++++++++++++++++++++++++++++++++++++++++
++++                                             +++
++                  Auth Object                    +
++++                                             +++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+**/
+// Create
+app.post('/authenticate',function(req,res){
+  authenticate.createToken(res,req.body.credentials,client);
+});
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 +++                                             +++
