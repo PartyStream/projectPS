@@ -6,6 +6,12 @@ DROP TABLE events CASCADE;
 DROP TABLE users CASCADE;
 DROP TABLE event_users CASCADE;
 
+CREATE TABLE picture_events
+(
+picture_id INTEGER,
+event_id INTEGER
+);
+
 CREATE TABLE users
 (
 id SERIAL NOT NULL UNIQUE,
@@ -20,10 +26,13 @@ dob DATE,
 PRIMARY KEY (id)
 );
 
-CREATE TABLE picture_events
+CREATE TABLE Sessions
 (
-picture_id INTEGER,
-event_id INTEGER
+id SERIAL UNIQUE,
+token VARCHAR(128) UNIQUE,
+user_id INTEGER,
+created TIMESTAMPTZ,
+PRIMARY KEY (id)
 );
 
 CREATE TABLE events
@@ -52,11 +61,15 @@ user_id INTEGER,
 permission INT2 NOT NULL DEFAULT 2
 );
 
-CREATE INDEX users_username_idx ON users(username);
-
 ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
 
 ALTER TABLE picture_events ADD FOREIGN KEY (event_id) REFERENCES events (id);
+
+CREATE INDEX users_username_idx ON users(username);
+
+CREATE INDEX Sessions_token_idx ON Sessions(token);
+
+ALTER TABLE Sessions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE events ADD FOREIGN KEY (creator) REFERENCES users (id);
 
