@@ -81,10 +81,15 @@ function upload(s3,bucket,eventId,fileName,fileData)
 {
   console.log('Uploading file: '+fileName);
   var path = eventId + "/" + fileName;
-  var data = {Bucket: bucket, Key: path, Body: fileData};
+  var imageData = {Bucket: bucket, Key: path, Body: fileData};
 
-  s3.client.putObject(data).done(function(resp) {
+  s3.client.putObject(imageData,function(err,data) {
+    console.dir(imageData);
+    if (err == null){
       console.log("Successfully uploaded data to: " + path);
+    } else {
+      console.log("Error uploading file to S3: " + err);
+    }
   });
 
 }// END function upload
