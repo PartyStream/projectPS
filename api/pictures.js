@@ -76,7 +76,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
         query.on('row', function(row) { });
 
         console.log('Openning file');
-        
+
         // use ID as filename to upload to S3
         fs.readFile(picture.path,function(err,data) {
             if(err)
@@ -106,7 +106,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
     response.writeHead(200,{"Content-Type":"text/plain"});
     response.write("Picture Uploaded!");
     response.end();
-    
+
 }// END function createPicture
 exports.createPicture = createPicture;
 
@@ -186,7 +186,6 @@ function readPicture(response,eventId,pictureId,client,s3)
         sql += "FROM pictures p ";
         sql += "WHERE p.id = $1";
 
-    console.log("QUERY: "+sql);
 
     query = client.query({
         name: 'read pictures',
@@ -205,6 +204,6 @@ function readPicture(response,eventId,pictureId,client,s3)
     });
 
     query.on('error',function(err) { console.log('Unable to read pictures: '+ err); } );
-    
+
 }// END function readPicture
 exports.readPicture = readPicture;
