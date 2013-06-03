@@ -1,14 +1,14 @@
 {
   "name": "projectPS",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "dependencies": {
-    "express": "latest",
-    "pg": "latest",
-    "aws-sdk": "latest"
+    "express": "3.2.6",
+    "pg": "1.1.2",
+    "aws-sdk": "1.2.x"
 
   },
   "engines": {
-    "node": "0.8.x",
-    "npm": "1.1.x"
+    "node": "0.10.9",
+    "npm": "latest"
   }
 }
