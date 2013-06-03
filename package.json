@@ -9,6 +9,6 @@
   },
   "engines": {
     "node": "0.10.9",
-    "npm": "latest"
+    "npm": "1.2.24"
   }
 }
