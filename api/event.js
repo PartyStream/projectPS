@@ -107,6 +107,10 @@ function getEvents(response,userId,client)
       values: [userId]
     });
 
+    query.on('error',function(err) {
+      console.log('DB Error Caught: '+ err);
+    });
+
      // return the user retrieved
     query.on('row', function(row) {
         data.push(row);
