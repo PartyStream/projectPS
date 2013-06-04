@@ -32,11 +32,29 @@ function createEvent(response,eventObject,client)
 
   query = client.query({
     name: 'insert event',
-    text: "INSERT INTO events(name, creator,date_created) values($1, $2,current_timestamp)",
+    text: "INSERT INTO events(name, creator,date_created) values($1, $2,current_timestamp) RETURNING id",
     values: [event.name, event.userId]
   });
 
-  query.on('end', function() {  });
+  query.on('error',function(err) {
+    console.log('DB Error Caught: '+ err);
+  });
+
+  query.on('row', function(row) {
+    var eventId = row.id;
+
+    // Create row in event_users
+    query = client.query({
+      name: 'update event',
+      text: "INSERT INTO event_users (event_id,user_id) values ($1,$2)",
+      values: [eventId, event.userId]
+    });
+
+    query.on('error',function(err) {
+      console.log('DB Error Caught: '+ err);
+    });
+  });
+
 
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
@@ -105,6 +123,10 @@ function getEvents(response,userId,client)
       name: 'getEvents',
       text: "SELECT * FROM events AS e JOIN event_users AS eu ON eu.event_id = e.id WHERE eu.user_id = $1",
       values: [userId]
+    });
+
+    query.on('error',function(err) {
+      console.log('DB Error Caught: '+ err);
     });
 
      // return the user retrieved
