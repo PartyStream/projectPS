@@ -54,6 +54,9 @@ app.configure(function () {
 app.get('/api', function (req, res) {
   res.send('PS API is running');
 });
+app.get('/', function (req, res) {
+  res.send('PS API is running');
+});
 
 
 /**
