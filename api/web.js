@@ -78,23 +78,23 @@ app.post('/authenticate',function(req,res){
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/user', function (req,res){
+app.post('/users', function (req,res){
   user.createUser(res,req.body.user,client);
 });
 // Read User
-app.get('/user/:id', function (req,res) {
+app.get('/users/:id', function (req,res) {
     user.readUser(res,req.params.id,client);
 });
 // Read Users
-app.get('/user', function (req,res) {
+app.get('/users', function (req,res) {
     user.readUsers(res,client);
 });
 // Update
-app.put('/user', function (req,res){
-  user.updateUser(res,req.body.user,client);
+app.put('/users/:id', function (req,res){
+  user.updateUser(res,req.params.id, req.body.user,client);
 });
 // Delete
-app.delete('/user/:id', function (req,res) {
+app.delete('/users/:id', function (req,res) {
   user.deleteUser(res,req.params.id,client);
 });
 

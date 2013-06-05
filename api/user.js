@@ -33,17 +33,17 @@ function createUser(response,userObject,client)
 
   query = client.query({
     name: 'insert user',
-    text: "INSERT INTO users(username, password,date_created,first_name,last_name,dob) values($1, $2,current_timestamp,$3,$4,$5)",
+    text: "INSERT INTO users(username,status,password,date_created,first_name,last_name,dob) values($1,'1',$2,current_timestamp,$3,$4,$5)",
     values: [user.username, user.password, user.first_name, user.last_name, user.dob]
   });
 
   query.on('error',function(err) { console.log('Unable to create user: '+ err); } );
-  
+
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
   response.write("Create User! ");
   response.end();
-    
+
 }// END function createUser
 exports.createUser = createUser;
 
@@ -72,7 +72,7 @@ function readUser(response,userId,client)
     values: [userId]
   });
 
-  
+
   // return the user retrieved
   query.on('row', function(row)
   {
@@ -88,7 +88,7 @@ function readUser(response,userId,client)
       console.log("User Not Found");
       json = "User not found";
     }
-    
+
 
     console.log(json);
     response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
@@ -96,8 +96,8 @@ function readUser(response,userId,client)
   });
 
   query.on('error',function(err) { console.log('Unable to read a user: '+ err); } );
-  
-    
+
+
 }// END function readUser
 exports.readUser = readUser;
 
@@ -139,7 +139,7 @@ function readUsers(response,client)
   });
 
   query.on('error',function(err) { console.log('Unable to read a user: '+ err); } );
-  
+
 }// END function readUsers
 exports.readUsers = readUsers;
 
@@ -151,26 +151,27 @@ exports.readUsers = readUsers;
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:46
 +   \param response    The response to return to the client
++   \param userId      The ID of the user to update
 +   \param userObject  The user data to update
 +   \param client     (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
-function updateUser(response,userObject,client)
+function updateUser(response,userId,userObject,client)
 {
-  console.log('updating user: ' + userObject);
-  // userObject = '{"firstName":"Test","lastName":"User","dob":"1900-01-01","id":"1"}';
+  console.log('updating user: ' + userId);
   var user   = JSON.parse(userObject);
+  console.dir(user);
   var query;
 
   query = client.query({
     name: 'update user',
     text: "UPDATE users SET first_name = $1,last_name = $2, dob = $3 WHERE id = $4",
-    values: [user.firstName, user.lastName, user.dob, user.id]
+    values: [user.firstName, user.lastName, user.dob, userId]
   });
-  
+
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-  
+
   // query.on('end', function(result) {
   //   // console.log(result.command);
   //   client.end();
@@ -180,7 +181,7 @@ function updateUser(response,userObject,client)
   response.writeHead(200,{"Content-Type":"text/plain"});
   response.write("User Updated!");
   response.end();
-    
+
 }// END function updateUser
 exports.updateUser = updateUser;
 
@@ -210,7 +211,7 @@ function deleteUser(response,userId,client)
   });
 
   query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-  
+
   // query.on('end', function(result) {
   //   // console.log(result.command);
   //   client.end();
