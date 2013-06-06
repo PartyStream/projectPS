@@ -98,5 +98,11 @@ INSERT INTO events(name,status,creator,date_created) VALUES('The Wall','1','2',c
 INSERT INTO events(name,status,creator,date_created) VALUES('Braavos','1','2',current_timestamp);
 INSERT INTO events(name,status,creator,date_created) VALUES('Riv','1','2',current_timestamp);
 
+-- EVENTS USERS
+INSERT INTO event_users (event_id,user_id,permission) VALUES(1,1,2);
+INSERT INTO event_users (event_id,user_id,permission) VALUES(2,1,2);
+INSERT INTO event_users (event_id,user_id,permission) VALUES(3,1,2);
+INSERT INTO event_users (event_id,user_id,permission) VALUES(1,2,2);
+
 
 
