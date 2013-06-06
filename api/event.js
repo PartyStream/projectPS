@@ -153,33 +153,54 @@ exports.getEvents = getEvents;
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:46
 +   \param response     The response to return to the client
-+   \param eventObject  The event data to update
++   \param eventId      The event id to update
++   \param userEmails   A list of all the user emails to be added to the event
 +   \param client       (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
-function updateEvent(response,eventObject,client)
+function updateEvent(response,eventId,userEmails,client)
 {
-  console.log('updating event: ' + eventObject);
-  var eventUsers   = JSON.parse(eventObject);
+  console.log('updating event: ' + eventId);
+  var emails   = JSON.parse(userEmails);
   var query;
 
-  for (var i = eventUsers.length - 1; i >= 0; i--)
+console.dir(emails.length);
+process.exit();
+  for (var i = emails.length - 1; i >= 0; i--)
   {
-    console.dir(eventUsers[i]);
+    console.dir(emails[i].email);
+    process.exit();
     query = client.query({
-      name: 'update event',
-      text: "INSERT INTO event_users (event_id,user_id) values ($1,$2)",
-      values: [eventUsers[i].event_id, eventUsers[i].user_id]
+      name: 'getIdFromEmail',
+      text: "SELECT id FROM users where email = $1",
+      values: [emails[i].email]
     });
 
+    query.on('error',function(err){
+      console.log('Could not get ID for email: ' + emails[i].email);
+      console.log('DB Error Caught: ' + err);
+    });
+
+    query.on('row',function(data){
+      id = data;
+      console.dir(id);
+      process.exit();
+
+      query = client.query({
+        name: 'addUserToEvent',
+        text: "INSERT INTO event_users (event_id,user_id) values ($1,$2)",
+        values: [eventUsers[i].event_id, eventUsers[i].user_id]
+      });
+
+    });
   }
 
-  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
+  // query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
 
-  query.on('end', function(result) {
+  // query.on('end', function(result) {
     // console.log(result.command);
-  });
+  // });
 
   // Send response to client
   response.writeHead(200,{"Content-Type":"text/plain"});
