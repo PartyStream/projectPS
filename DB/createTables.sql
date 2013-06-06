@@ -13,12 +13,13 @@ CREATE TABLE users
 id SERIAL NOT NULL UNIQUE,
 status BIT,
 username VARCHAR(50) NOT NULL UNIQUE,
-password VARCHAR(50) NOT NULL,
-date_created TIMESTAMPTZ,
-last_modified TIMESTAMPTZ DEFAULT NOW(),
+password VARCHAR(100) NOT NULL,
+email VARCHAR(75) NOT NULL UNIQUE,
 first_name VARCHAR(50),
 last_name VARCHAR(50),
 dob DATE,
+date_created TIMESTAMPTZ,
+last_modified TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
 );
 
@@ -67,12 +68,13 @@ permission INT2 NOT NULL DEFAULT 2
 ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
 ALTER TABLE picture_events ADD FOREIGN KEY (event_id) REFERENCES events (id);
 CREATE INDEX users_username_idx ON users(username);
-CREATE INDEX Sessions_token_idx ON Sessions(token);
-ALTER TABLE Sessions ADD FOREIGN KEY (user_id) REFERENCES users (id);
+CREATE INDEX users_email_idx ON users(email);
 ALTER TABLE events ADD FOREIGN KEY (creator) REFERENCES users (id);
 ALTER TABLE pictures ADD FOREIGN KEY (owner) REFERENCES users (id);
 ALTER TABLE event_users ADD FOREIGN KEY (event_id) REFERENCES events (id);
 ALTER TABLE event_users ADD FOREIGN KEY (user_id) REFERENCES users (id);
+CREATE INDEX Sessions_token_idx ON Sessions(token);
+ALTER TABLE Sessions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
