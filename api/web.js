@@ -97,6 +97,10 @@ app.put('/users/:id', function (req,res){
 app.delete('/users/:id', function (req,res) {
   user.deleteUser(res,req.params.id,client);
 });
+// Get events for a user
+app.get('/users/:id/events', function (req,res) {
+    partyEvent.getEvents(res,req.params.id,client);
+});
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -106,20 +110,16 @@ app.delete('/users/:id', function (req,res) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/event', function (req,res){
+app.post('/events', function (req,res){
   partyEvent.createEvent(res,req.body.partyEvent,client);
 });
 // Read Event
-app.get('/event/:id', function (req,res) {
+app.get('/events/:id', function (req,res) {
     partyEvent.readEvent(res,req.params.id,client);
 });
-// Read Events
-app.get('/event_all/:id', function (req,res) {
-    partyEvent.getEvents(res,req.params.id,client);
-});
 // Update
-app.put('/event', function (req,res){
-  partyEvent.updateEvent(res,req.body.partyEvent,client);
+app.put('/events/:id', function (req,res){
+  partyEvent.updateEvent(res,req.params.id,req.body.partyEvent,client);
 });
 // Delete
 app.delete('/event/:id', function (req,res) {
