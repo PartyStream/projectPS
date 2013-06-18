@@ -238,6 +238,19 @@
         </size>
         <zorder>4</zorder>
         <SQLField>
+            <name><![CDATA[id]]></name>
+            <type><![CDATA[INTEGER]]></type>
+            <primaryKey>1</primaryKey>
+            <autoIncrement><![CDATA[1]]></autoIncrement>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <indexed><![CDATA[1]]></indexed>
+            <notNull><![CDATA[1]]></notNull>
+            <temporaryOriginalName><![CDATA[id]]></temporaryOriginalName>
+            <uid><![CDATA[0753C445-F383-4602-AC2F-D1002B3A09F5]]></uid>
+            <unique><![CDATA[1]]></unique>
+            <unsigned><![CDATA[1]]></unsigned>
+        </SQLField>
+        <SQLField>
             <name><![CDATA[event_id]]></name>
             <type><![CDATA[INTEGER]]></type>
             <referencesField>id</referencesField>
