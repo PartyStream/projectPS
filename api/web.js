@@ -134,11 +134,15 @@ app.delete('/event/:id', function (req,res) {
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
-// Invite user to
-app.post('/events/:eventId/invite/:userId' , function (req,res){
+// Invite a user to an event
+app.get('/events/:eventId/invite/:userId' , function (req,res){
   eventInvite.inviteAUser(res,req.params.eventId,req.params.userId,client);
 });
 
+// Invite many users to an event
+app.post('/events/:eventId/invite' , function (req,res){
+  eventInvite.inviteManyUser(res,req.params.eventId,req.body.users,client);
+});
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
