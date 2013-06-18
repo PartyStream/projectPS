@@ -60,9 +60,11 @@ event_id INTEGER
 
 CREATE TABLE event_users
 (
+id SERIAL NOT NULL UNIQUE,
 event_id INTEGER,
 user_id INTEGER,
-permission INT2 NOT NULL DEFAULT 2
+permission INT2 NOT NULL DEFAULT 2,
+PRIMARY KEY (id)
 );
 
 ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
@@ -71,6 +73,7 @@ CREATE INDEX users_username_idx ON users(username);
 CREATE INDEX users_email_idx ON users(email);
 ALTER TABLE events ADD FOREIGN KEY (creator) REFERENCES users (id);
 ALTER TABLE pictures ADD FOREIGN KEY (owner) REFERENCES users (id);
+CREATE INDEX event_users_id_idx ON event_users(id);
 ALTER TABLE event_users ADD FOREIGN KEY (event_id) REFERENCES events (id);
 ALTER TABLE event_users ADD FOREIGN KEY (user_id) REFERENCES users (id);
 CREATE INDEX Sessions_token_idx ON Sessions(token);
