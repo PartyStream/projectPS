@@ -148,64 +148,42 @@ exports.getEvents = getEvents;
 /**
 +   \brief updateEvent
 +
-+       This function will update an event by adding users to it
++       This function will update an event
 +
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:46
 +   \param response     The response to return to the client
 +   \param eventId      The event id to update
-+   \param userEmails   A list of all the user emails to be added to the event
++   \param eventInfo    The updated event information
 +   \param client       (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
-function updateEvent(response,eventId,userEmails,client)
+function updateEvent(response,eventId,event,client)
 {
   console.log('updating event: ' + eventId);
-  var emails   = JSON.parse(userEmails);
+  var eventData   = JSON.parse(event);
   var query;
 
-console.dir(emails.length);
-process.exit();
-  for (var i = emails.length - 1; i >= 0; i--)
-  {
-    console.dir(emails[i].email);
-    process.exit();
-    query = client.query({
-      name: 'getIdFromEmail',
-      text: "SELECT id FROM users where email = $1",
-      values: [emails[i].email]
-    });
+  query = client.query({
+    name: 'Update Event',
+    text: "UPDATE events SET status = $1, name = $2, creator = $3, last_modified = current_timestamp WHERE id = $4",
+    values: [eventData.status, eventData.name, eventData.creator,eventId]
+  });
 
-    query.on('error',function(err){
-      console.log('Could not get ID for email: ' + emails[i].email);
-      console.log('DB Error Caught: ' + err);
-    });
+  query.on('error',function(err){
+    console.log('DB Error Caught: ' + err);
+    response.writeHead(500,{"Content-Type":"text/plain"});
+    response.write("Error Updating Event!");
+    response.end();
+  });
 
-    query.on('row',function(data){
-      id = data;
-      console.dir(id);
-      process.exit();
-
-      query = client.query({
-        name: 'addUserToEvent',
-        text: "INSERT INTO event_users (event_id,user_id) values ($1,$2)",
-        values: [eventUsers[i].event_id, eventUsers[i].user_id]
-      });
-
-    });
-  }
-
-  // query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-
-  // query.on('end', function(result) {
-    // console.log(result.command);
-  // });
-
-  // Send response to client
-  response.writeHead(200,{"Content-Type":"text/plain"});
-  response.write("Event Updated!");
-  response.end();
+  query.on('end', function(result){
+    // Send response to client
+    response.writeHead(200,{"Content-Type":"text/plain"});
+    response.write("Event Updated!");
+    response.end();
+  });
 
 }// END function updateEvent
 exports.updateEvent = updateEvent;

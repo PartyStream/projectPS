@@ -111,7 +111,7 @@ app.get('/users/:id/events', function (req,res) {
 **/
 // Create
 app.post('/events', function (req,res){
-  partyEvent.createEvent(res,req.body.partyEvent,client);
+  partyEvent.createEvent(res,req.body.event,client);
 });
 // Read Event
 app.get('/events/:id', function (req,res) {
@@ -119,12 +119,24 @@ app.get('/events/:id', function (req,res) {
 });
 // Update
 app.put('/events/:id', function (req,res){
-  partyEvent.updateEvent(res,req.params.id,req.body.partyEvent,client);
+  partyEvent.updateEvent(res,req.params.id,req.body.event,client);
 });
 // Delete
 app.delete('/event/:id', function (req,res) {
   partyEvent.deleteEvent(res,req.params.id,client);
 });
+
+/**
++++++++++++++++++++++++++++++++++++++++++++++++++++
++++                                             +++
++                  Event Invites
++++                                             +++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+**/
+app.post('/events/:eventId/invite/:userId' , function (req,res){
+  partyEvent.inviteAUser(res,req.params.eventId,req.params.userId,client);
+});
+
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
