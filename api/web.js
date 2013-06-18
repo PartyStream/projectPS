@@ -16,7 +16,8 @@ var application_root = __dirname,
     path             = require("path"),
     url              = require("url") ,
     user             = require('./user'),
-    partyEvent       = require('./event'),
+    event            = require('./event'),
+    eventInvite      = require('./eventInvitations'),
     pictures         = require('./pictures'),
     pg               = require('pg').native,
     AWS              = require('aws-sdk'),
@@ -99,7 +100,7 @@ app.delete('/users/:id', function (req,res) {
 });
 // Get events for a user
 app.get('/users/:id/events', function (req,res) {
-    partyEvent.getEvents(res,req.params.id,client);
+    event.getEvents(res,req.params.id,client);
 });
 
 /**
@@ -111,19 +112,19 @@ app.get('/users/:id/events', function (req,res) {
 **/
 // Create
 app.post('/events', function (req,res){
-  partyEvent.createEvent(res,req.body.event,client);
+  event.createEvent(res,req.body.event,client);
 });
 // Read Event
 app.get('/events/:id', function (req,res) {
-    partyEvent.readEvent(res,req.params.id,client);
+    event.readEvent(res,req.params.id,client);
 });
 // Update
 app.put('/events/:id', function (req,res){
-  partyEvent.updateEvent(res,req.params.id,req.body.event,client);
+  event.updateEvent(res,req.params.id,req.body.event,client);
 });
 // Delete
 app.delete('/event/:id', function (req,res) {
-  partyEvent.deleteEvent(res,req.params.id,client);
+  event.deleteEvent(res,req.params.id,client);
 });
 
 /**
@@ -133,8 +134,9 @@ app.delete('/event/:id', function (req,res) {
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
+// Invite user to
 app.post('/events/:eventId/invite/:userId' , function (req,res){
-  partyEvent.inviteAUser(res,req.params.eventId,req.params.userId,client);
+  eventInvite.inviteAUser(res,req.params.eventId,req.params.userId,client);
 });
 
 
