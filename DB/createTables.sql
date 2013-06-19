@@ -61,10 +61,11 @@ event_id INTEGER
 CREATE TABLE event_users
 (
 id SERIAL NOT NULL UNIQUE,
-event_id INTEGER,
-user_id INTEGER,
+event_id INTEGER NOT NULL,
+user_id INTEGER NOT NULL,
 permission INT2 NOT NULL DEFAULT 2,
-PRIMARY KEY (id)
+PRIMARY KEY (id),
+UNIQUE (event_id,user_id)
 );
 
 ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
