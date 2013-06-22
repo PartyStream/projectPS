@@ -123,7 +123,7 @@ app.put('/events/:id', function (req,res){
   event.updateEvent(res,req.params.id,req.body.event,client);
 });
 // Delete
-app.delete('/event/:id', function (req,res) {
+app.delete('/events/:id', function (req,res) {
   event.deleteEvent(res,req.params.id,client);
 });
 
@@ -152,17 +152,20 @@ app.post('/events/:eventId/invite' , function (req,res){
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/picture', function (req,res){
+app.post('/photos', function (req,res){
   pictures.createPicture(res,req.body.eventId,req.body.userId,req.files.picture,s3,client);
 });
-// Read Pictures
-app.get('/pictures/:eventId', function (req,res) {
+// Read Pictures For Event
+app.get('/events/:eventId/photos', function (req,res) {
     pictures.readPictures(res,req.params.eventId,client);
 });
 // Read A Picture
-app.get('/picture/:eventId/:pictureId', function (req,res) {
+app.get('/photos/:eventId/:pictureId', function (req,res) {
     pictures.readPicture(res,req.params.eventId,req.params.pictureId,client,s3);
 });
+
+// TODO: PUT PHOTOS (UPDATE)
+// TODO: DELETE PHOTOS (DELETE)
 
 // Launch server
 console.log('Listening on port: '+ port);
