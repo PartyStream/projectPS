@@ -26,7 +26,7 @@
 **/
 function inviteAUser(response,eventId,userId,client)
 {
-    console.log('Adding userid: ' + userId + ' to event: ' + eventId);
+    console.log('Adding A userid: ' + userId + ' to event: ' + eventId);
 
     var query;
 
@@ -71,12 +71,12 @@ exports.inviteAUser = inviteAUser;
 **/
 function inviteManyUser(response,eventId,users,client)
 {
-    console.log('Adding userids: ' + users + ' to event: ' + eventId);
+    console.log('Many userids: ' + users + ' to event: ' + eventId);
 
     var userIds = JSON.parse(users);
     var query;
 
-    for (var i = userIds.length - 1; i >= 0; i--) {
+    for (var i =  0; i < userIds.length; i++) {
         query = client.query({
             name: 'invite many users to an event',
             text: 'INSERT INTO event_users(event_id, user_id, permission) VALUES($1,$2,2)',
@@ -90,10 +90,12 @@ function inviteManyUser(response,eventId,users,client)
             response.write("Could not invite users to event, please try again check API logs for error");
             response.end();
         });
-    };
-    response.writeHead(200,{"Content-Type":"text/plain"});
-    response.write("Users invited to event! ");
-    response.end();
+    }
+    query.on('end',function(){
+        response.writeHead(200,{"Content-Type":"text/plain"});
+        response.write("Users invited to event! ");
+        response.end();
+    });
 
 }// END function inviteManyUser
 exports.inviteManyUser = inviteManyUser;
