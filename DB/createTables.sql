@@ -38,6 +38,7 @@ id SERIAL NOT NULL UNIQUE,
 status BIT,
 name VARCHAR(50),
 creator INTEGER,
+event_date TIMESTAMPTZ,
 date_created TIMESTAMPTZ,
 last_modified TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
