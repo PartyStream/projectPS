@@ -68,6 +68,14 @@ PRIMARY KEY (id),
 UNIQUE (event_id,user_id)
 );
 
+CREATE TABLE comments
+(
+id SERIAL UNIQUE,
+comment TEXT,
+picture_id INTEGER,
+PRIMARY KEY (id)
+);
+
 ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
 ALTER TABLE picture_events ADD FOREIGN KEY (event_id) REFERENCES events (id);
 CREATE INDEX users_username_idx ON users(username);
@@ -79,6 +87,8 @@ ALTER TABLE event_users ADD FOREIGN KEY (event_id) REFERENCES events (id);
 ALTER TABLE event_users ADD FOREIGN KEY (user_id) REFERENCES users (id);
 CREATE INDEX Sessions_token_idx ON Sessions(token);
 ALTER TABLE Sessions ADD FOREIGN KEY (user_id) REFERENCES users (id);
+CREATE INDEX comments_id_idx ON comments(id);
+ALTER TABLE comments ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
