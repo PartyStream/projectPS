@@ -32,8 +32,8 @@ function createEvent(response,eventObject,client)
 
   query = client.query({
     name: 'insert event',
-    text: "INSERT INTO events(name, creator,date_created) values($1, $2,current_timestamp) RETURNING id",
-    values: [event.name, event.userId]
+    text: "INSERT INTO events(name, creator,event_date,date_created) values($1, $2,$3,current_timestamp) RETURNING id",
+    values: [event.name, event.userId,event.eventDate]
   });
 
   query.on('error',function(err) {
@@ -167,8 +167,8 @@ function updateEvent(response,eventId,event,client)
 
   query = client.query({
     name: 'Update Event',
-    text: "UPDATE events SET status = $1, name = $2, creator = $3, last_modified = current_timestamp WHERE id = $4",
-    values: [eventData.status, eventData.name, eventData.creator,eventId]
+    text: "UPDATE events SET status = $1, name = $2, creator = $3, event_date = $4, last_modified = current_timestamp WHERE id = $5",
+    values: [eventData.status, eventData.name, eventData.creator,eventData.eventDate,eventId]
   });
 
   query.on('error',function(err){
