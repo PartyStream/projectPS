@@ -32,8 +32,8 @@ function createEvent(response,eventObject,client)
 
   query = client.query({
     name: 'insert event',
-    text: "INSERT INTO events(name, creator,date_created) values($1, $2,current_timestamp) RETURNING id",
-    values: [event.name, event.userId]
+    text: "INSERT INTO events(name, creator,event_date,date_created) values($1, $2,$3,current_timestamp) RETURNING id",
+    values: [event.name, event.userId,event.eventDate]
   });
 
   query.on('error',function(err) {
@@ -148,43 +148,42 @@ exports.getEvents = getEvents;
 /**
 +   \brief updateEvent
 +
-+       This function will update an event by adding users to it
++       This function will update an event
 +
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:46
 +   \param response     The response to return to the client
-+   \param eventObject  The event data to update
++   \param eventId      The event id to update
++   \param eventInfo    The updated event information
 +   \param client       (PSQL) PSQL client object
 +
 +   \return True if pass, False otherwise
 **/
-function updateEvent(response,eventObject,client)
+function updateEvent(response,eventId,event,client)
 {
-  console.log('updating event: ' + eventObject);
-  var eventUsers   = JSON.parse(eventObject);
+  console.log('updating event: ' + eventId);
+  var eventData   = JSON.parse(event);
   var query;
 
-  for (var i = eventUsers.length - 1; i >= 0; i--)
-  {
-    console.dir(eventUsers[i]);
-    query = client.query({
-      name: 'update event',
-      text: "INSERT INTO event_users (event_id,user_id) values ($1,$2)",
-      values: [eventUsers[i].event_id, eventUsers[i].user_id]
-    });
-
-  }
-
-  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-
-  query.on('end', function(result) {
-    // console.log(result.command);
+  query = client.query({
+    name: 'Update Event',
+    text: "UPDATE events SET status = $1, name = $2, creator = $3, event_date = $4, last_modified = current_timestamp WHERE id = $5",
+    values: [eventData.status, eventData.name, eventData.creator,eventData.eventDate,eventId]
   });
 
-  // Send response to client
-  response.writeHead(200,{"Content-Type":"text/plain"});
-  response.write("Event Updated!");
-  response.end();
+  query.on('error',function(err){
+    console.log('DB Error Caught: ' + err);
+    response.writeHead(500,{"Content-Type":"text/plain"});
+    response.write("Error Updating Event!");
+    response.end();
+  });
+
+  query.on('end', function(result){
+    // Send response to client
+    response.writeHead(200,{"Content-Type":"text/plain"});
+    response.write("Event Updated!");
+    response.end();
+  });
 
 }// END function updateEvent
 exports.updateEvent = updateEvent;

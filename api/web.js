@@ -16,7 +16,8 @@ var application_root = __dirname,
     path             = require("path"),
     url              = require("url") ,
     user             = require('./user'),
-    partyEvent       = require('./event'),
+    event            = require('./event'),
+    eventInvite      = require('./eventInvitations'),
     pictures         = require('./pictures'),
     pg               = require('pg').native,
     AWS              = require('aws-sdk'),
@@ -54,6 +55,9 @@ app.configure(function () {
 app.get('/api', function (req, res) {
   res.send('PS API is running');
 });
+app.get('/', function (req, res) {
+  res.send('PS API is running');
+});
 
 
 /**
@@ -75,24 +79,28 @@ app.post('/authenticate',function(req,res){
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/user', function (req,res){
+app.post('/users', function (req,res){
   user.createUser(res,req.body.user,client);
 });
 // Read User
-app.get('/user/:id', function (req,res) {
+app.get('/users/:id', function (req,res) {
     user.readUser(res,req.params.id,client);
 });
 // Read Users
-app.get('/user', function (req,res) {
+app.get('/users', function (req,res) {
     user.readUsers(res,client);
 });
 // Update
-app.put('/user', function (req,res){
-  user.updateUser(res,req.body.user,client);
+app.put('/users/:id', function (req,res){
+  user.updateUser(res,req.params.id, req.body.user,client);
 });
 // Delete
-app.delete('/user/:id', function (req,res) {
+app.delete('/users/:id', function (req,res) {
   user.deleteUser(res,req.params.id,client);
+});
+// Get events for a user
+app.get('/users/:id/events', function (req,res) {
+    event.getEvents(res,req.params.id,client);
 });
 
 /**
@@ -103,24 +111,37 @@ app.delete('/user/:id', function (req,res) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/event', function (req,res){
-  partyEvent.createEvent(res,req.body.partyEvent,client);
+app.post('/events', function (req,res){
+  event.createEvent(res,req.body.event,client);
 });
 // Read Event
-app.get('/event/:id', function (req,res) {
-    partyEvent.readEvent(res,req.params.id,client);
-});
-// Read Events
-app.get('/event_all/:id', function (req,res) {
-    partyEvent.getEvents(res,req.params.id,client);
+app.get('/events/:id', function (req,res) {
+    event.readEvent(res,req.params.id,client);
 });
 // Update
-app.put('/event', function (req,res){
-  partyEvent.updateEvent(res,req.body.partyEvent,client);
+app.put('/events/:id', function (req,res){
+  event.updateEvent(res,req.params.id,req.body.event,client);
 });
 // Delete
-app.delete('/event/:id', function (req,res) {
-  partyEvent.deleteEvent(res,req.params.id,client);
+app.delete('/events/:id', function (req,res) {
+  event.deleteEvent(res,req.params.id,client);
+});
+
+/**
++++++++++++++++++++++++++++++++++++++++++++++++++++
++++                                             +++
++                  Event Invites
++++                                             +++
++++++++++++++++++++++++++++++++++++++++++++++++++++
+**/
+// Invite a user to an event
+app.get('/events/:eventId/invite/:userId' , function (req,res){
+  eventInvite.inviteAUser(res,req.params.eventId,req.params.userId,client);
+});
+
+// Invite many users to an event
+app.post('/events/:eventId/invite' , function (req,res){
+  eventInvite.inviteManyUser(res,req.params.eventId,req.body.users,client);
 });
 
 /**
@@ -131,17 +152,20 @@ app.delete('/event/:id', function (req,res) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/picture', function (req,res){
+app.post('/photos', function (req,res){
   pictures.createPicture(res,req.body.eventId,req.body.userId,req.files.picture,s3,client);
 });
-// Read Pictures
-app.get('/pictures/:eventId', function (req,res) {
+// Read Pictures For Event
+app.get('/events/:eventId/photos', function (req,res) {
     pictures.readPictures(res,req.params.eventId,client);
 });
 // Read A Picture
-app.get('/picture/:eventId/:pictureId', function (req,res) {
+app.get('/photos/:eventId/:pictureId', function (req,res) {
     pictures.readPicture(res,req.params.eventId,req.params.pictureId,client,s3);
 });
+
+// TODO: PUT PHOTOS (UPDATE)
+// TODO: DELETE PHOTOS (DELETE)
 
 // Launch server
 console.log('Listening on port: '+ port);
