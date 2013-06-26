@@ -21,7 +21,7 @@ var application_root = __dirname,
     pictures         = require('./pictures'),
     pg               = require('pg').native,
     AWS              = require('aws-sdk'),
-    client           = new pg.Client(process.env.DATABASE_URL);
+    client           = new pg.Client(process.env.DATABASE_URL || 'postgress://postgres:asdasd@127.0.0.1/postgres');
 
 AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY});
 AWS.config.update({region: 'us-east-1'});
