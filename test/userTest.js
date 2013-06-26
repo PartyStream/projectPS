@@ -1,13 +1,15 @@
-var request = require('superagent');
-var expect = require('expect.js');
+var request = require('supertest');
+var assert  = require('assert');
+var app     = require('../api/web.js');
+var should  = require('should');
 
-describe('Get User ID 1', function(){
-    it (function(done){
-        request.get('localhost:5000/users/1').end(function(res){
-            expect(res).to.exist;
-            expect(res.status).to.equal(200);
-            expect(res.body).to.contain('username');
-            done();
+describe('Get /', function(){
+    it('should respond OK',function(done){
+        request(app)
+        .get('/')
+        .end(function(err, res){
+          res.status.should.equal(200);
+          done(err);
         });
     });
 });
