@@ -170,3 +170,4 @@ app.get('/photos/:eventId/:pictureId', function (req,res) {
 // Launch server
 console.log('Listening on port: '+ port);
 app.listen(port);
+module.exports = app;
