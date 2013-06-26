@@ -13,3 +13,26 @@ describe('Get /', function(){
         });
     });
 });
+
+describe('Get /api', function(){
+    it('should respond OK',function(done){
+        request(app)
+        .get('/api')
+        .end(function(err, res){
+          res.status.should.equal(200);
+          done(err);
+        });
+    });
+});
+
+// Getting All Users
+describe('Get /users', function(){
+    it('should respond OK',function(done){
+        request(app)
+        .get('/users')
+        .end(function(err, res){
+          res.status.should.equal(200);
+          done(err);
+        });
+    });
+});
