@@ -163,10 +163,14 @@ app.get('/events/:eventId/photos', function (req,res) {
 app.get('/photos/:eventId/:pictureId', function (req,res) {
     pictures.readPicture(res,req.params.eventId,req.params.pictureId,client,s3);
 });
+// Update
+app.put('/photos/:id', function (req,res){
+  pictures.updatePicture(res,req.params.id,client,req.body.photo);
+});
 
-// TODO: PUT PHOTOS (UPDATE)
 // TODO: DELETE PHOTOS (DELETE)
 
 // Launch server
 console.log('Listening on port: '+ port);
 app.listen(port);
+module.exports = app;
