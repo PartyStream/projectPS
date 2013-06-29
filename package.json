@@ -2,9 +2,12 @@
   "name": "projectPS",
   "version": "0.1.0",
   "dependencies": {
-    "express": "3.2.6",
-    "pg": "1.1.2",
-    "aws-sdk": "1.2.x"
+    "express"    : "3.2.6",
+    "pg"         : "1.1.2",
+    "aws-sdk"    : "1.2.x",
+    "mocha"      : "1.1.x",
+    "chai"       : "*",
+    "supertest"  : "0.7.x",
 
   },
   "engines": {
