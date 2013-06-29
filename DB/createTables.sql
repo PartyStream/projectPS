@@ -8,6 +8,21 @@ DROP TABLE event_users CASCADE;
 DROP TABLE sessions CASCADE;
 DROP TABLE comments CASCADE;
 
+CREATE TABLE picture_events
+(
+picture_id INTEGER,
+event_id INTEGER
+);
+
+CREATE TABLE comments
+(
+id SERIAL UNIQUE,
+comment TEXT,
+picture_id INTEGER,
+date_created TIMESTAMPTZ DEFAULT NOW(),
+date_updated TIMESTAMPTZ,
+PRIMARY KEY (id)
+);
 
 CREATE TABLE users
 (
@@ -24,15 +39,6 @@ last_modified TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
 );
 
-CREATE TABLE Sessions
-(
-id SERIAL UNIQUE,
-token VARCHAR(128) UNIQUE,
-user_id INTEGER,
-created TIMESTAMPTZ,
-PRIMARY KEY (id)
-);
-
 CREATE TABLE events
 (
 id SERIAL NOT NULL UNIQUE,
@@ -40,7 +46,7 @@ status BIT,
 name VARCHAR(50),
 creator INTEGER,
 event_date TIMESTAMPTZ,
-date_created TIMESTAMPTZ,
+date_created TIMESTAMPTZ DEFAULT NOW(),
 last_modified TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
 );
@@ -50,31 +56,25 @@ CREATE TABLE pictures
 id SERIAL NOT NULL UNIQUE,
 name VARCHAR(50),
 owner INTEGER,
-date_created TIMESTAMPTZ,
+date_created TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
-);
-
-CREATE TABLE picture_events
-(
-picture_id INTEGER,
-event_id INTEGER
 );
 
 CREATE TABLE event_users
 (
 id SERIAL NOT NULL UNIQUE,
-event_id INTEGER NOT NULL,
-user_id INTEGER NOT NULL,
+event_id INTEGER,
+user_id INTEGER,
 permission INT2 NOT NULL DEFAULT 2,
-PRIMARY KEY (id),
-UNIQUE (event_id,user_id)
+PRIMARY KEY (id)
 );
 
-CREATE TABLE comments
+CREATE TABLE sessions
 (
 id SERIAL UNIQUE,
-comment TEXT,
-picture_id INTEGER,
+token VARCHAR(128) UNIQUE,
+user_id INTEGER,
+created TIMESTAMPTZ,
 PRIMARY KEY (id)
 );
 
