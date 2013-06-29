@@ -35,7 +35,7 @@ first_name VARCHAR(50),
 last_name VARCHAR(50),
 dob DATE,
 date_created TIMESTAMPTZ,
-last_modified TIMESTAMPTZ DEFAULT NOW(),
+date_updated TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
 );
 
@@ -47,7 +47,7 @@ name VARCHAR(50),
 creator INTEGER,
 event_date TIMESTAMPTZ,
 date_created TIMESTAMPTZ DEFAULT NOW(),
-last_modified TIMESTAMPTZ DEFAULT NOW(),
+date_updated TIMESTAMPTZ DEFAULT NOW(),
 PRIMARY KEY (id)
 );
 
@@ -77,6 +77,7 @@ user_id INTEGER,
 created TIMESTAMPTZ,
 PRIMARY KEY (id)
 );
+
 
 ALTER TABLE picture_events ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
 ALTER TABLE picture_events ADD FOREIGN KEY (event_id) REFERENCES events (id);
