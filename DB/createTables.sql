@@ -57,6 +57,7 @@ id SERIAL NOT NULL UNIQUE,
 name VARCHAR(50),
 owner INTEGER,
 date_created TIMESTAMPTZ DEFAULT NOW(),
+date_updated TIMESTAMPTZ,
 PRIMARY KEY (id)
 );
 
