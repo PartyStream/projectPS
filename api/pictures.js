@@ -207,3 +207,47 @@ function readPicture(response,eventId,pictureId,client,s3)
 
 }// END function readPicture
 exports.readPicture = readPicture;
+
+/**
++   \brief updatePicture
++
++       This function will update a picture record
++
++   \author Salvatore D'Agostino
++   \date  2013-06-29 14:39
++   \param response   (HTTP) The response to return to the client
++   \param pictureId  (INT)  The ID of the picture to udpate
++   \param client     (PSQL) PSQL client object
++   \param data       (JSON) The new picture data to update
++
++   \return Success message if passed, Error otherwise
+**/
+function updatePicture(response,pictureId,client,data)
+{
+    console.log('updating picture: ' + pictureId);
+    console.dir(data);
+    var pictureData = JSON.parse(data);
+    var query;
+
+    query = client.query({
+      name: 'Update Picture',
+      text: "UPDATE pictures SET name = $1, owner = $2, date_updated = current_timestamp WHERE id = $3",
+      values: [pictureData.name, pictureData.owner,pictureId]
+    });
+
+    query.on('error',function(err){
+      console.log('DB Error Caught: ' + err);
+      response.writeHead(500,{"Content-Type":"text/plain"});
+      response.write("Error Updating picture!");
+      response.end();
+    });
+
+    query.on('end', function(result){
+      // Send response to client
+      response.writeHead(200,{"Content-Type":"text/plain"});
+      response.write("Picture Updated!");
+      response.end();
+    });
+
+}// END function updatePicture
+exports.updatePicture = updatePicture;
