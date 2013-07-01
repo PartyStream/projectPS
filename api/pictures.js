@@ -278,9 +278,9 @@ function deletePicture(response,eventId,pictureId,client,s3)
     s3Object.Key    = eventId+'/'+pictureId+'.png';
     console.dir(s3Object);
     s3.deleteObject(s3Object,function(err,data){
-        if (err != null) {
+        if (err !== null) {
             console.log("Error from S3: " + err);
-        };
+        }
     });
 
     // Delete picture from event
