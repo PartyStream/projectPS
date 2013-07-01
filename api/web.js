@@ -167,7 +167,15 @@ app.get('/photos/:eventId/:pictureId', function (req,res) {
 app.put('/photos/:id', function (req,res){
   pictures.updatePicture(res,req.params.id,client,req.body.photo);
 });
-
+// Delete
+app.delete('/photos/:eventId/:pictureId', function (req,res) {
+  pictures.deletePicture(
+    res,
+    req.params.eventId,
+    req.params.pictureId,
+    client,
+    s3);
+});
 // TODO: DELETE PHOTOS (DELETE)
 
 // Launch server

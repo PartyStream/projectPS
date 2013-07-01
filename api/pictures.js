@@ -251,3 +251,72 @@ function updatePicture(response,pictureId,client,data)
 
 }// END function updatePicture
 exports.updatePicture = updatePicture;
+
+/**
++   \brief deletePicture
++
++       This function will delete a picture
++
++   \author Salvatore D'Agostino
++   \date  2013-06-29 16:16
++   \param response   (HTTP) The response to return to the client
++   \param pictureId  (INT)  The ID of the picture to udpate
++   \param client     (PSQL) PSQL client object
++   \param s3         (CONN)    The contents of the file
++
++   \return return
+**/
+function deletePicture(response,eventId,pictureId,client,s3)
+{
+    console.log('Deleting picture: ' + pictureId);
+
+    var query;
+
+    // Delete picture from S3 (async)
+    var s3Object = new Object();
+    s3Object.Bucket = process.env.S3_BUCKET_NAME;
+    s3Object.Key    = eventId+'/'+pictureId+'.png';
+    console.dir(s3Object);
+    s3.deleteObject(s3Object,function(err,data){
+        if (err != null) {
+            console.log("Error from S3: " + err);
+        };
+    });
+
+    // Delete picture from event
+    query = client.query({
+      name: 'delete picture_events',
+      text: "DELETE FROM picture_events WHERE picture_id = $1",
+      values: [pictureId]
+    });
+
+    query.on('error',function(err) {
+        response.writeHead(500, {'content-type':'text/plain'});
+        response.write("Could not delete picture from event");
+        response.end();
+    });
+
+    query.on('end', function(result) {
+        // Delete picture from pictures
+        query = client.query({
+          name: 'delete picture',
+          text: "DELETE FROM pictures WHERE id = $1",
+          values: [pictureId]
+        });
+
+        query.on('error',function(err) {
+            response.writeHead(500, {'content-type':'text/plain'});
+            response.write("Could not delete picture");
+            response.end();
+        });
+
+        query.on('end', function(result) {
+            response.writeHead(200, {'content-type':'text/plain'});
+            response.write("Picture deleted");
+            response.end();
+        });
+    });
+
+
+}// END function deletePicture
+exports.deletePicture = deletePicture;
