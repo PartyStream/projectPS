@@ -59,19 +59,20 @@
         <SQLField>
             <name><![CDATA[date_created]]></name>
             <type><![CDATA[TIMESTAMPTZ]]></type>
+            <defaultValue><![CDATA[NOW()]]></defaultValue>
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
             <uid><![CDATA[13F2EB9E-FE4B-4657-8748-94B6F4447F5F]]></uid>
             <unsigned><![CDATA[1]]></unsigned>
         </SQLField>
         <SQLField>
-            <name><![CDATA[last_modified]]></name>
+            <name><![CDATA[date_updated]]></name>
             <type><![CDATA[TIMESTAMPTZ]]></type>
             <defaultValue><![CDATA[NOW()]]></defaultValue>
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
             <uid><![CDATA[7F4DA402-4B24-4183-8C8E-3C35441C5456]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
-        <labelWindowIndex><![CDATA[7]]></labelWindowIndex>
+        <labelWindowIndex><![CDATA[6]]></labelWindowIndex>
         <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[24A8E90A-8F14-4CDA-AE38-1B8C3E52AC42]]></uid>
     </SQLTable>
@@ -123,12 +124,19 @@
         <SQLField>
             <name><![CDATA[date_created]]></name>
             <type><![CDATA[TIMESTAMPTZ]]></type>
+            <defaultValue><![CDATA[NOW()]]></defaultValue>
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
             <uid><![CDATA[3C80BF3A-47E1-460B-B0B0-A2B00EE99320]]></uid>
             <unsigned><![CDATA[1]]></unsigned>
         </SQLField>
+        <SQLField>
+            <name><![CDATA[date_updated]]></name>
+            <type><![CDATA[TIMESTAMPTZ]]></type>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[F90C13D0-AD51-41E3-A1F9-96C31918125F]]></uid>
+        </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
-        <labelWindowIndex><![CDATA[6]]></labelWindowIndex>
+        <labelWindowIndex><![CDATA[5]]></labelWindowIndex>
         <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[392AD69F-D6DE-42EF-9FF4-2B94B7382297]]></uid>
     </SQLTable>
@@ -140,7 +148,7 @@
             <y>192.00</y>
         </location>
         <size>
-            <width>192.00</width>
+            <width>236.00</width>
             <height>220.00</height>
         </size>
         <zorder>0</zorder>
@@ -219,14 +227,15 @@
             <unsigned><![CDATA[1]]></unsigned>
         </SQLField>
         <SQLField>
-            <name><![CDATA[last_modified]]></name>
+            <name><![CDATA[date_updated]]></name>
             <type><![CDATA[TIMESTAMPTZ]]></type>
             <defaultValue><![CDATA[NOW()]]></defaultValue>
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <temporaryOriginalName><![CDATA[last_modified]]></temporaryOriginalName>
             <uid><![CDATA[E28B6310-8FCD-4361-A004-DF3C6A1F67EC]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
-        <labelWindowIndex><![CDATA[5]]></labelWindowIndex>
+        <labelWindowIndex><![CDATA[4]]></labelWindowIndex>
         <temporaryOriginalName><![CDATA[Table1]]></temporaryOriginalName>
         <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[601F8210-2994-4292-84B1-B4686E798A06]]></uid>
@@ -295,7 +304,7 @@
             <unsigned><![CDATA[1]]></unsigned>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
-        <labelWindowIndex><![CDATA[4]]></labelWindowIndex>
+        <labelWindowIndex><![CDATA[3]]></labelWindowIndex>
         <uid><![CDATA[69C1EA48-461F-4C12-8577-AA7337E44431]]></uid>
     </SQLTable>
     <SQLTable>
@@ -340,7 +349,7 @@
             <uid><![CDATA[BFD30536-D8FE-43F3-82BC-9DE67D19EE7B]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
-        <labelWindowIndex><![CDATA[3]]></labelWindowIndex>
+        <labelWindowIndex><![CDATA[2]]></labelWindowIndex>
         <ui.treeExpanded><![CDATA[1]]></ui.treeExpanded>
         <uid><![CDATA[9052622F-BDC9-4FB0-88FF-E098AD140A19]]></uid>
     </SQLTable>
@@ -387,13 +396,26 @@
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
             <uid><![CDATA[A0C575EC-1C24-40D3-B88F-755F4C394A98]]></uid>
         </SQLField>
+        <SQLField>
+            <name><![CDATA[date_created]]></name>
+            <type><![CDATA[TIMESTAMPTZ]]></type>
+            <defaultValue><![CDATA[NOW()]]></defaultValue>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[483422EC-0AB3-4535-B81A-7B84DD3FA1E5]]></uid>
+        </SQLField>
+        <SQLField>
+            <name><![CDATA[date_updated]]></name>
+            <type><![CDATA[TIMESTAMPTZ]]></type>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[FBF29D3F-F3F3-4CEF-BC2E-EE5C9D46C22B]]></uid>
+        </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
         <labelWindowIndex><![CDATA[1]]></labelWindowIndex>
         <temporaryOriginalName><![CDATA[Table7]]></temporaryOriginalName>
         <uid><![CDATA[91770209-36B3-4D85-8F24-199DCD08A788]]></uid>
     </SQLTable>
     <SQLTable>
-        <name><![CDATA[Sessions]]></name>
+        <name><![CDATA[sessions]]></name>
         <schema><![CDATA[]]></schema>
         <location>
             <x>320.00</x>
