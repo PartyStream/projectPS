@@ -33,16 +33,24 @@ function createUser(response,userObject,client)
 
   query = client.query({
     name: 'insert user',
-    text: "INSERT INTO users(username,status,password,date_created,first_name,last_name,dob) values($1,'1',$2,current_timestamp,$3,$4,$5)",
-    values: [user.username, user.password, user.first_name, user.last_name, user.dob]
+    text: "INSERT INTO users(username,status,password,date_created,first_name,last_name,dob,email) values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
+    values: [user.username, user.password, user.first_name, user.last_name, user.dob, user.email]
   });
 
-  query.on('error',function(err) { console.log('Unable to create user: '+ err); } );
+  query.on('error',function(err) {
+    console.log('Unable to create user: '+ err);
+    response.writeHead(500, {'content-type':'text/plain'});
+    response.write("Could not create User");
+    response.end();
+  });
 
   // Send response to client
-  response.writeHead(200,{"Content-Type":"text/plain"});
-  response.write("Create User! ");
-  response.end();
+  query.on('end', function(result){
+    response.writeHead(200,{"Content-Type":"text/plain"});
+    response.write("Create User! ");
+    response.end();
+  });
+
 
 }// END function createUser
 exports.createUser = createUser;
@@ -68,34 +76,25 @@ function readUser(response,userId,client)
 
   query = client.query({
     name: 'read user',
-    text: "SELECT * from users where id = $1",
+    text: "SELECT * from users WHERE id = $1",
     values: [userId]
   });
-
 
   // return the user retrieved
   query.on('row', function(row)
   {
-    var json;
-    if (row !== null)
-    {
-      console.log("User Found");
-      console.dir(row);
-      json = JSON.stringify(row);
-    }
-    else
-    {
-      console.log("User Not Found");
-      json = "User not found";
-    }
-
-
+    console.log('reading response from DB');
+    var json = JSON.stringify(row);
     console.log(json);
     response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
     response.end(json);
   });
 
-  query.on('error',function(err) { console.log('Unable to read a user: '+ err); } );
+  query.on('error',function(err) {
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not Read user");
+      response.end();
+  });
 
 
 }// END function readUser
@@ -174,17 +173,19 @@ function updateUser(response,userId,userObject,client)
     values: [user.firstName, user.lastName, user.dob, userId]
   });
 
-  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
+  query.on('error',function(err) {
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not update user");
+      response.end();
+  });
 
-  // query.on('end', function(result) {
-  //   // console.log(result.command);
-  //   client.end();
-  // });
+  query.on('end', function(result) {
+    // Send response to client
+      response.writeHead(200,{"Content-Type":"text/plain"});
+      response.write("User Updated!");
+      response.end();
+  });
 
-  // Send response to client
-  response.writeHead(200,{"Content-Type":"text/plain"});
-  response.write("User Updated!");
-  response.end();
 
 }// END function updateUser
 exports.updateUser = updateUser;
@@ -214,15 +215,16 @@ function deleteUser(response,userId,client)
     values: [userId]
   });
 
-  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
+  query.on('error',function(err) {
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not delete user");
+      response.end();
+  });
 
-  // query.on('end', function(result) {
-  //   // console.log(result.command);
-  //   client.end();
-  // });
-
-  response.writeHead(200, {'content-type':'text/plain'});
-  response.write("User deleted!");
-  response.end();
+  query.on('end', function(result) {
+    response.writeHead(200, {'content-type':'text/plain'});
+    response.write("User deleted!");
+    response.end();
+  });
 }// END function deleteUser
 exports.deleteUser = deleteUser;
