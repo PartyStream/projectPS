@@ -76,28 +76,15 @@ function readUser(response,userId,client)
 
   query = client.query({
     name: 'read user',
-    text: "SELECT * from users where id = $1",
+    text: "SELECT * from users WHERE id = $1",
     values: [userId]
   });
-
 
   // return the user retrieved
   query.on('row', function(row)
   {
     console.log('reading response from DB');
-    var json;
-    if (row !== null)
-    {
-      console.log("User Found");
-      console.dir(row);
-      json = JSON.stringify(row);
-    }
-    else
-    {
-      console.log("User Not Found");
-      json = "User not found";
-    }
-
+    var json = JSON.stringify(row);
     console.log(json);
     response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
     response.end(json);
