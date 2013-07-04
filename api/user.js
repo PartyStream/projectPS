@@ -84,6 +84,7 @@ function readUser(response,userId,client)
   // return the user retrieved
   query.on('row', function(row)
   {
+    console.log('reading response from DB');
     var json;
     if (row !== null)
     {
