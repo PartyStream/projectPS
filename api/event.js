@@ -38,6 +38,9 @@ function createEvent(response,eventObject,client)
 
   query.on('error',function(err) {
     console.log('DB Error Caught: '+ err);
+    response.writeHead(500, {'content-type':'text/plain'});
+    response.write("Could not create Event");
+    response.end();
   });
 
   query.on('row', function(row) {
@@ -52,14 +55,21 @@ function createEvent(response,eventObject,client)
 
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not assign event to user");
+      response.end();
     });
+
+    query.on('end', function(result){
+      // Send response to client
+      response.writeHead(200,{"Content-Type":"text/plain"});
+      response.write("Created Event! ");
+      response.end();
+    });
+
+
   });
 
-
-  // Send response to client
-  response.writeHead(200,{"Content-Type":"text/plain"});
-  response.write("Created Event! ");
-  response.end();
 }// END function createEvent
 exports.createEvent = createEvent;
 
@@ -86,6 +96,13 @@ function readEvent(response,eventId,client)
     name: 'read event',
     text: "SELECT * from events where id = $1",
     values: [eventId]
+  });
+
+  query.on('error',function(err) {
+    console.log('DB Error Caught: '+ err);
+    response.writeHead(500, {'content-type':'text/plain'});
+    response.write("Could not read event");
+    response.end();
   });
 
   // return the event retrieved
@@ -127,6 +144,9 @@ function getEvents(response,userId,client)
 
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not get events");
+      response.end();
     });
 
      // return the user retrieved
@@ -213,14 +233,17 @@ function deleteEvent(response,eventId,client)
     values: [eventId]
   });
 
-  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-
-  query.on('end', function(result) {
-    // console.log(result.command);
+  query.on('error',function(err) {
+    console.log('DB Error Caught: '+ err);
+    response.writeHead(500, {'content-type':'text/plain'});
+    response.write("Could delete event");
+    response.end();
   });
 
-  response.writeHead(200, {'content-type':'text/plain'});
-  response.write("Event deleted!");
-  response.end();
+  query.on('end', function(result) {
+    response.writeHead(200, {'content-type':'text/plain'});
+    response.write("Event deleted!");
+    response.end();
+  });
 }// END function deleteEvent
 exports.deleteEvent = deleteEvent;
