@@ -52,14 +52,6 @@ app.configure(function () {
     app.delete(/object/:id)    (remove)
 */
 
-app.get('/api', function (req, res) {
-  res.send('PS API is running');
-});
-app.get('/', function (req, res) {
-  res.send('PS API is running');
-});
-
-
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 +++                                             +++
@@ -72,6 +64,13 @@ app.all('/', function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   next();
  });
+
+app.get('/api', function (req, res) {
+  res.send('PS API is running');
+});
+app.get('/', function (req, res) {
+  res.send('PS API is running');
+});
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
