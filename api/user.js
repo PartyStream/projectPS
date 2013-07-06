@@ -150,7 +150,7 @@ function readUser(response,userId,client)
 {
   console.log('Reading user: ' + userId);
 
-  var query;
+  var query, data = [];
 
   query = client.query({
     name: 'read a user',
@@ -159,18 +159,28 @@ function readUser(response,userId,client)
   });
 
   // return the user retrieved
-  query.on('row', function(row)
-  {
-    console.log('reading response from DB');
-    var json = JSON.stringify(row);
-    console.log(json);
-    response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-    response.end(json);
+  query.on('row', function(row){
+      data.push(row);
   });
+
+  query.on('end', function(result) {
+      console.dir(result);
+      console.log(result.rowCount + ' rows were received');
+      if (result.rowCount == 0) {
+        response.writeHead(404, {'content-type':'text/plain'});
+        response.write("Oops, we can't process that");
+        response.end();
+      } else {
+        var json = JSON.stringify(data);
+        console.log(json);
+        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+        response.end(json);
+      }
+    });
 
   query.on('error',function(err) {
       response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not Read user");
+      response.write("Oops, we can't process that");
       response.end();
   });
 
