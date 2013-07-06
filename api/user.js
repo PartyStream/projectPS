@@ -11,6 +11,45 @@
 **/
 
 /**
++   \brief getUserForAuth
++
++       This function will get a user for authentication
++
++   \author Salvatore D'Agostino
++   \date  2013-07-05 20:50
++   \param userId   The ID of the user to be returned
++   \param client   The connection to PSQL
++   \param fn       A function to return
++
++   \return (OBJECT) The user object, False if not found
+**/
+function getUserForAuth(userId,client,fn)
+{
+
+  console.log('Reading user for authentication: ' + userId);
+
+  var query;
+
+  query = client.query({
+    name: 'read user',
+    text: "SELECT * from users WHERE id = $1",
+    values: [userId]
+  });
+
+  // return the user retrieved
+  query.on('row', function(row){
+    fn(null,row);
+  });
+
+  query.on('error',function(err) {
+      fn(new Error('User ' + id + ' does not exist'));
+  });
+
+}// END function getUserForAuth
+exports.getUserForAuth = getUserForAuth;
+
+
+/**
 +   \brief createUser
 +
 +       This will create a user
