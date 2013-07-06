@@ -4,7 +4,7 @@
   "dependencies": {
     "express"    : "3.2.6",
     "pg"         : "1.3.x",
-    "aws-sdk"    : "1.2.x",
+    "aws-sdk"    : "1.3.x",
     "mocha"      : "1.1.x",
     "chai"       : "*",
     "supertest"  : "0.7.x",

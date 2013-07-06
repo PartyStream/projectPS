@@ -92,8 +92,33 @@ function createPicture(response,eventId,creator,picture,s3,client)
             {
                 // TODO dynamically get file format
                 var fileName = pictureId.id + ".png";
-                console.log("FileName: " + fileName);
-                awsS3.upload(s3,process.env.S3_BUCKET_NAME,eventId,fileName,data);
+                var key      = eventId+'/'+fileName;
+                var bucket   = process.env.S3_BUCKET_NAME;
+                var body     = data;
+                var params   = {
+                    "ACL"   : "public-read",
+                    "Body"  : body,
+                    "Bucket": bucket,
+                    "Key"   : key
+                };
+
+                console.log("Object to be put:");
+                console.dir(params);
+                s3.putObject(params,function(err,data){
+                    if (err){
+                        console.log('Error uploading image:' + err);
+                    } else {
+                        console.log("response from AWS:");
+                        console.dir(data);
+
+                        // ========================================================
+                        // = Should not need this, all photos will be read-only   =
+                        // ========================================================
+                        // var params = {Bucket: process.env.S3_BUCKET_NAME, Key: key};
+                        // var url    = s3.getSignedUrl('getObject', params);
+                        // console.log('The URL is', url);
+                    }
+                });
             }
         });
 
