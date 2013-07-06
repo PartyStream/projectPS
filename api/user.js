@@ -11,6 +11,84 @@
 **/
 
 /**
++   \brief getUserByIdForAuth
++
++       This function will get a user for authentication
++
++   \author Salvatore D'Agostino
++   \date  2013-07-05 20:50
++   \param userId   The ID of the user to be returned
++   \param client   The connection to PSQL
++   \param fn       A function to return
++
++   \return (OBJECT) The user object, False if not found
+**/
+function getUserByIdForAuth(userId,client,fn)
+{
+
+  console.log('Reading user for authentication: ' + userId);
+
+  var query;
+
+  query = client.query({
+    name: 'read user',
+    text: "SELECT * from users WHERE id = $1",
+    values: [userId]
+  });
+
+  // return the user retrieved
+  query.on('row', function(row){
+    fn(null,row);
+  });
+
+  query.on('error',function(err) {
+      fn(new Error('User ' + id + ' does not exist'));
+  });
+
+}// END function getUserByIdForAuth
+exports.getUserByIdForAuth = getUserByIdForAuth;
+
+
+
+/**
++   \brief getUserByNameForAuth
++
++       This function will get a user for authentication
++
++   \author Salvatore D'Agostino
++   \date  2013-07-05 20:50
++   \param username  The ID of the user to be returned
++   \param client    The connection to PSQL
++   \param fn        A function to return
++
++   \return (OBJECT) The user object, False if not found
+**/
+function getUserByNameForAuth(username,client,fn)
+{
+
+  console.log('Reading user for authentication: ' + username);
+
+  var query;
+
+  query = client.query({
+    name: 'read user',
+    text: "SELECT * from users WHERE username = $1",
+    values: [username]
+  });
+
+  // return the user retrieved
+  query.on('row', function(row){
+    fn(null,row);
+  });
+
+  query.on('error',function(err) {
+      fn(new Error('User ' + id + ' does not exist'));
+  });
+
+}// END function getUserByNameForAuth
+exports.getUserByNameForAuth = getUserByNameForAuth;
+
+/**
 +   \brief createUser
 +
 +       This will create a user
@@ -72,27 +150,37 @@ function readUser(response,userId,client)
 {
   console.log('Reading user: ' + userId);
 
-  var query;
+  var query, data = [];
 
   query = client.query({
-    name: 'read user',
+    name: 'read a user',
     text: "SELECT * from users WHERE id = $1",
     values: [userId]
   });
 
   // return the user retrieved
-  query.on('row', function(row)
-  {
-    console.log('reading response from DB');
-    var json = JSON.stringify(row);
-    console.log(json);
-    response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-    response.end(json);
+  query.on('row', function(row){
+      data.push(row);
   });
+
+  query.on('end', function(result) {
+      console.dir(result);
+      console.log(result.rowCount + ' rows were received');
+      if (result.rowCount == 0) {
+        response.writeHead(404, {'content-type':'text/plain'});
+        response.write("Oops, we can't process that");
+        response.end();
+      } else {
+        var json = JSON.stringify(data);
+        console.log(json);
+        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+        response.end(json);
+      }
+    });
 
   query.on('error',function(err) {
       response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not Read user");
+      response.write("Oops, we can't process that");
       response.end();
   });
 
