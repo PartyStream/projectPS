@@ -153,7 +153,7 @@ function readUser(response,userId,client)
   var query;
 
   query = client.query({
-    name: 'read user',
+    name: 'read a user',
     text: "SELECT * from users WHERE id = $1",
     values: [userId]
   });
