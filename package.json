@@ -7,7 +7,9 @@
     "aws-sdk"    : "1.2.x",
     "mocha"      : "1.1.x",
     "chai"       : "*",
-    "supertest"  : "0.7.x"
+    "supertest"  : "0.7.x",
+    "passport": ">= 0.0.0",
+    "passport-local": ">= 0.0.0"
   },
   "engines": {
     "node": "0.10.9",
