@@ -81,11 +81,11 @@
         <schema><![CDATA[]]></schema>
         <location>
             <x>320.00</x>
-            <y>2.00</y>
+            <y>0.00</y>
         </location>
         <size>
             <width>192.00</width>
-            <height>128.00</height>
+            <height>140.00</height>
         </size>
         <zorder>2</zorder>
         <SQLField>
@@ -134,6 +134,12 @@
             <type><![CDATA[TIMESTAMPTZ]]></type>
             <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
             <uid><![CDATA[F90C13D0-AD51-41E3-A1F9-96C31918125F]]></uid>
+        </SQLField>
+        <SQLField>
+            <name><![CDATA[url]]></name>
+            <type><![CDATA[VARCHAR(150)]]></type>
+            <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
+            <uid><![CDATA[6CD3B38A-D1B8-49BA-9DC3-C989CA72C7D6]]></uid>
         </SQLField>
         <didChangeNameDuringValidation><![CDATA[0]]></didChangeNameDuringValidation>
         <labelWindowIndex><![CDATA[5]]></labelWindowIndex>
