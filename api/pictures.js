@@ -53,12 +53,13 @@ function createPicture(response,eventId,creator,picture,s3,client)
     // TODO update event updated field (timestamp)
 
     var pictureId;
+    var bucket   = process.env.S3_BUCKET_NAME;
     // return the id of the picture inserted
     query.on('row', function(row) {
         pictureId = row;
         console.log('Inserted picture ID: '+pictureId.id);
 
-        url = 'https://s3.amazonaws.com/projectPS/'+eventId+'/'+pictureId.id+'.png';
+        url = 'https://s3.amazonaws.com/'+bucket+'/'+eventId+'/'+pictureId.id+'.png';
 
         // Create event relation in picture_events join table
         console.log('Creating relation between picture and event');
@@ -109,7 +110,6 @@ function createPicture(response,eventId,creator,picture,s3,client)
                 // TODO dynamically get file format
                 var fileName = pictureId.id + ".png";
                 var key      = eventId+'/'+fileName;
-                var bucket   = process.env.S3_BUCKET_NAME;
                 var body     = data;
                 var params   = {
                     "ACL"   : "public-read",
