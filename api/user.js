@@ -154,7 +154,7 @@ function readUser(response,userId,client)
 
   query = client.query({
     name: 'read a user',
-    text: "SELECT * from users WHERE id = $1",
+    text: "SELECT id,status,username,email,first_name,last_name,dob,date_created,date_updated from users WHERE id = $1",
     values: [userId]
   });
 
