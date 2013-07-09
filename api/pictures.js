@@ -127,12 +127,6 @@ function createPicture(response,eventId,creator,picture,s3,client)
                         console.log("response from AWS:");
                         console.dir(data);
 
-                        // ========================================================
-                        // = Should not need this, all photos will be read-only   =
-                        // ========================================================
-                        // var params = {Bucket: process.env.S3_BUCKET_NAME, Key: key};
-                        // var url    = s3.getSignedUrl('getObject', params);
-                        // console.log('The URL is', url);
                     }
                 });
             }
