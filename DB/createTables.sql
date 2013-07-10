@@ -58,6 +58,7 @@ name VARCHAR(50),
 owner INTEGER,
 date_created TIMESTAMPTZ DEFAULT NOW(),
 date_updated TIMESTAMPTZ,
+url VARCHAR(150),
 PRIMARY KEY (id)
 );
 

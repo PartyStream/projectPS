@@ -31,14 +31,15 @@ function createPicture(response,eventId,creator,picture,s3,client)
 {
     var awsS3 = require('./amazonS3');
     var fs    = require('fs');
+    var url;
 
     // create record in DB for picture and get back ID
     console.log('Inserting image into DB');
 
     query = client.query({
       name: 'insert picture',
-      text: "INSERT INTO pictures (name,owner,date_created) values ($1,$2,current_timestamp) RETURNING id",
-      values: [picture.name, creator]
+      text: "INSERT INTO pictures (name,owner,url,date_created) values ($1,$2,$3,current_timestamp) RETURNING id",
+      values: [picture.name, creator,url]
     });
 
     query.on('error',function(err) {
@@ -52,10 +53,13 @@ function createPicture(response,eventId,creator,picture,s3,client)
     // TODO update event updated field (timestamp)
 
     var pictureId;
+    var bucket   = process.env.S3_BUCKET_NAME;
     // return the id of the picture inserted
     query.on('row', function(row) {
         pictureId = row;
         console.log('Inserted picture ID: '+pictureId.id);
+
+        url = 'https://s3.amazonaws.com/'+bucket+'/'+eventId+'/'+pictureId.id+'.png';
 
         // Create event relation in picture_events join table
         console.log('Creating relation between picture and event');
@@ -73,7 +77,20 @@ function createPicture(response,eventId,creator,picture,s3,client)
             response.end();
         });
 
-        query.on('row', function(row) { });
+        query = client.query({
+          name: 'add image URL',
+          text: "UPDATE pictures SET url = $1 WHERE id = $2",
+          values: [url,pictureId.id]
+        });
+
+        query.on('error',function(err) {
+            console.log('DB Error Caught: '+ err);
+            // Send response to client
+            response.writeHead(200,{"Content-Type":"text/plain"});
+            response.write("Could set picture URL");
+            response.end();
+        });
+
 
         console.log('Openning file');
 
@@ -92,8 +109,26 @@ function createPicture(response,eventId,creator,picture,s3,client)
             {
                 // TODO dynamically get file format
                 var fileName = pictureId.id + ".png";
-                console.log("FileName: " + fileName);
-                awsS3.upload(s3,process.env.S3_BUCKET_NAME,eventId,fileName,data);
+                var key      = eventId+'/'+fileName;
+                var body     = data;
+                var params   = {
+                    "ACL"   : "public-read",
+                    "Body"  : body,
+                    "Bucket": bucket,
+                    "Key"   : key
+                };
+
+                console.log("Object to be put:");
+                console.dir(params);
+                s3.putObject(params,function(err,data){
+                    if (err){
+                        console.log('Error uploading image:' + err);
+                    } else {
+                        console.log("response from AWS:");
+                        console.dir(data);
+
+                    }
+                });
             }
         });
 

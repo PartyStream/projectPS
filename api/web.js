@@ -21,44 +21,94 @@ var application_root = __dirname,
     pictures         = require('./pictures'),
     pg               = require('pg').native,
     AWS              = require('aws-sdk'),
-    client           = new pg.Client(process.env.DATABASE_URL);
+    client           = new pg.Client(process.env.DATABASE_URL),
+    passport         = require("passport"),
+    LocalStrategy    = require('passport-local').Strategy;;
 
 AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY});
 AWS.config.update({region: 'us-east-1'});
 
 var s3 = new AWS.S3();
 
-// console.log(process.env.DATABASE_URL); return 1;
-
 // Connect To DB
 client.connect();
+
+// ==================
+// = PASSPORT START =
+// ==================
+
+// Passport session setup.
+//   To support persistent login sessions, Passport needs to be able to
+//   serialize users into and deserialize users out of the session.  Typically,
+//   this will be as simple as storing the user ID when serializing, and finding
+//   the user by ID when deserializing.
+passport.serializeUser(function(user, done) {
+  if (typeof user.id === 'undefined'){
+    done(null,null);
+  } else {
+    done(null, (user.id).toString());
+
+  }
+});
+
+passport.deserializeUser(function(id, done) {
+  user.getUserByIdForAuth(id,client, function (err, user) {
+    done(err, user);
+  });
+});
+
+// Use the LocalStrategy within Passport.
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+
+      // Find the user by username.  If there is no user with the given
+      // username, or the password is not correct, set the user to `false` to
+      // indicate failure and set a flash message.  Otherwise, return the
+      // authenticated `user`.
+      user.getUserByNameForAuth(username,client, function(err, user) {
+        console.log('Getting user for auth');
+        if (err) { return done(err); }
+        if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
+        if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
+        return done(null, user);
+      })
+    });
+  }
+));
+
+// Simple route middleware to ensure user is authenticated.
+//   Use this route middleware on any resource that needs to be protected.  If
+//   the request is authenticated (typically via a persistent login session),
+//   the request will proceed.  Otherwise, the user will be redirected to the
+//   login page.
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  console.log('Unauthorized request sent');
+  res.writeHead(401, {'content-type':'text/plain'});
+  res.write("Unauthorized");
+  res.end();
+}
+
+// ================
+// = PASSPORT END =
+// ================
 
 var app = express();
 
 // Config
 app.configure(function () {
   app.use(express.bodyParser());
+  app.use(express.cookieParser());
   app.use(express.methodOverride());
+  app.use(express.session({ secret: 'my super secret password is 12345' }));
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(app.router);
   app.use(express.static(path.join(application_root, "public")));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
-
-/*
-    app.post(/object)          (create)
-    app.get(/object/:id)       (read)
-    app.get(/object)           (read all)
-    app.put(/object/:id)       (update)
-    app.delete(/object/:id)    (remove)
-*/
-
-app.get('/api', function (req, res) {
-  res.send('PS API is running');
-});
-app.get('/', function (req, res) {
-  res.send('PS API is running');
-});
-
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -67,11 +117,18 @@ app.get('/', function (req, res) {
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
-app.all('/', function(req, res, next) {
+app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   next();
  });
+
+app.get('/api', function (req, res) {
+  res.send('PS API is running');
+});
+app.get('/', function (req, res) {
+  res.send('PS API is running');
+});
 
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -80,9 +137,37 @@ app.all('/', function(req, res, next) {
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
-// Create
-app.post('/authenticate',function(req,res){
-  authenticate.createToken(res,req.body.credentials,client);
+// POST /login
+app.post('/login', function(req, res, next) {
+
+  user = req.body.user;
+
+  if (typeof user === 'undefined'){
+    console.log('No user passed into login');
+    res.writeHead(400, {'content-type':'text/plain'});
+    res.write("Missing Parameters");
+    res.end();
+  } else {
+    passport.authenticate('local', function(err, user, info) {
+      console.dir(user);
+      process.reallyExit();
+      if (err) { return next(err) }
+      if (!user) {
+        // Login Error
+        console.log('Login Failed');
+        res.writeHead(401, {'content-type':'text/plain'});
+        res.write("Unauthorized");
+        res.end();
+      }
+      req.logIn(user, function(err) {
+        if (err) { return next(err); }
+        // Login Success
+        res.writeHead(200,{"Content-Type":"text/plain"});
+        res.write("Authenticated");
+        res.end();
+      });
+    })(req, res, next);
+  }
 });
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -189,7 +274,8 @@ app.delete('/photos/:eventId/:pictureId', function (req,res) {
     client,
     s3);
 });
-// TODO: DELETE PHOTOS (DELETE)
+
+
 
 // Launch server
 console.log('Listening on port: '+ port);
