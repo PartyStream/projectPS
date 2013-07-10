@@ -38,6 +38,9 @@ function createEvent(response,eventObject,client)
 
   query.on('error',function(err) {
     console.log('DB Error Caught: '+ err);
+    response.writeHead(500, {'content-type':'text/plain'});
+    response.write("Could not create Event");
+    response.end();
   });
 
   query.on('row', function(row) {
@@ -52,14 +55,21 @@ function createEvent(response,eventObject,client)
 
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not assign event to user");
+      response.end();
     });
+
+    query.on('end', function(result){
+      // Send response to client
+      response.writeHead(200,{"Content-Type":"text/plain"});
+      response.write("Created Event! ");
+      response.end();
+    });
+
+
   });
 
-
-  // Send response to client
-  response.writeHead(200,{"Content-Type":"text/plain"});
-  response.write("Created Event! ");
-  response.end();
 }// END function createEvent
 exports.createEvent = createEvent;
 
@@ -80,7 +90,7 @@ function readEvent(response,eventId,client)
 {
   console.log('Reading event: ' + eventId);
 
-  var query;
+  var query, data = [];
 
   query = client.query({
     name: 'read event',
@@ -88,13 +98,32 @@ function readEvent(response,eventId,client)
     values: [eventId]
   });
 
-  // return the event retrieved
-  query.on('row', function(row) {
-      var json = JSON.stringify(row);
-      console.log(json);
-      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-      response.end(json);
+  query.on('error',function(err) {
+    console.log('DB Error Caught: '+ err);
+    response.writeHead(500, {'content-type':'text/plain'});
+    response.write("Could not read event");
+    response.end();
   });
+
+  query.on('row', function(row){
+      data.push(row);
+  });
+
+  // return the event retrieved
+  query.on('end', function(result) {
+      console.dir(result);
+      console.log(result.rowCount + ' rows were received');
+      if (result.rowCount == 0) {
+        response.writeHead(404, {'content-type':'text/plain'});
+        response.write("Oops, we can't process that");
+        response.end();
+      } else {
+        var json = JSON.stringify(data);
+        console.log(json);
+        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+        response.end(json);
+      }
+    });
 
 }// END function readEvent
 exports.readEvent = readEvent;
@@ -127,6 +156,9 @@ function getEvents(response,userId,client)
 
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not get events");
+      response.end();
     });
 
      // return the user retrieved
@@ -213,14 +245,17 @@ function deleteEvent(response,eventId,client)
     values: [eventId]
   });
 
-  query.on('error',function(err) { console.log('DB Error Caught: '+ err); } );
-
-  query.on('end', function(result) {
-    // console.log(result.command);
+  query.on('error',function(err) {
+    console.log('DB Error Caught: '+ err);
+    response.writeHead(500, {'content-type':'text/plain'});
+    response.write("Could delete event");
+    response.end();
   });
 
-  response.writeHead(200, {'content-type':'text/plain'});
-  response.write("Event deleted!");
-  response.end();
+  query.on('end', function(result) {
+    response.writeHead(200, {'content-type':'text/plain'});
+    response.write("Event deleted!");
+    response.end();
+  });
 }// END function deleteEvent
 exports.deleteEvent = deleteEvent;

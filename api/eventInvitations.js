@@ -58,7 +58,7 @@ exports.inviteAUser = inviteAUser;
 /**
 +   \brief inviteManyUser
 +
-+       This function will invite a single user to an event
++       This function will invite multiple users to an event
 +
 +   \author Salvatore D'Agostino
 +   \date  2013-06-17 22:27
