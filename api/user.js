@@ -227,7 +227,7 @@ function readUsers(response,client)
 
   query.on('error',function(err) {
     console.log('Unable to read a user: '+ err);
-    response.writeHead(500, {'content-type':'application/json'});
+    response.writeHead(500, {'content-type':'text/plain'});
     response.end('Could not get users');
   });
 
