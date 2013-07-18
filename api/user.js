@@ -227,8 +227,8 @@ function readUsers(response,client)
 
   query.on('error',function(err) {
     console.log('Unable to read a user: '+ err);
-    response.writeHead(500, {'content-type':'application/json', 'content-length':json.length});
-    response.end('Could now get users');
+    response.writeHead(500, {'content-type':'application/json'});
+    response.end('Could not get users');
   });
 
 }// END function readUsers
