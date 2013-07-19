@@ -1,3 +1,5 @@
+### Are you a Party Stream contributor? If you are, please read the [wiki](https://github.com/PartyStream/projectPS/wiki) for guidelines and how-tos.
+
 Party Stream API
 =============
 
