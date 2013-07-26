@@ -29,8 +29,11 @@
 **/
 function createPicture(response,eventId,creator,picture,s3,client)
 {
-    var awsS3 = require('./amazonS3');
-    var fs    = require('fs');
+    var awsS3       = require('./amazonS3');
+    var fs          = require('fs');
+    var crypto      = require('crypto');
+    var hash        = "";
+    var timestampMS = Date.now();
     var url;
 
     // create record in DB for picture and get back ID
