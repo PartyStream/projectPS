@@ -23,8 +23,7 @@ var application_root = __dirname,
     AWS              = require('aws-sdk'),
     client           = new pg.Client(process.env.DATABASE_URL),
     passport         = require("passport"),
-    // LocalStrategy    = require('passport-local').Strategy,
-    DigestStrategy   = require('passport-http').DigestStrategy;
+    LocalStrategy    = require('passport-local').Strategy;
 
 AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY});
 AWS.config.update({region: 'us-east-1'});
@@ -37,23 +36,18 @@ client.connect();
 // ==================
 // = PASSPORT START =
 // ==================
-/*
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
 //   this will be as simple as storing the user ID when serializing, and finding
 //   the user by ID when deserializing.
-passport.serializeUser(function(user, done) {
-  if (typeof user.id === 'undefined'){
-    done(null,null);
-  } else {
-    done(null, (user.id).toString());
 
-  }
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  user.getUserByIdForAuth(id,client, function (err, user) {
+  findById(id, function (err, user) {
     done(err, user);
   });
 });
@@ -69,44 +63,16 @@ passport.use(new LocalStrategy(
       // indicate failure and set a flash message.  Otherwise, return the
       // authenticated `user`.
       user.getUserByNameForAuth(username,client, function(err, user) {
-        console.log('Getting user for auth');
+        console.log('Got response for User in DB');
         if (err) { return done(err); }
         if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
         if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
         return done(null, user);
-      })
+      });
     });
   }
 ));
-*/
 
-// Use the DigestStrategy within Passport.
-//   This strategy requires a `secret`function, which is used to look up the
-//   use and the user's password known to both the client and server.  The
-//   password is used to compute a hash, and authentication will fail if the
-//   computed value does not match that of the request.  Also required is a
-//   `validate` function, which can be used to validate nonces and other
-//   authentication parameters contained in the request.
-passport.use(new DigestStrategy({ qop: 'auth' },
-  function(username, done) {
-    // Find the user by username.  If there is no user with the given username
-    // set the user to `false` to indicate failure.  Otherwise, return the
-    // user and user's password.
-    user.getUserByNameForAuth(username,client, function(err, user) {
-      console.log('Hello World');
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      return done(null, user, user.password);
-    });
-  },
-  function(params, done) {
-    // asynchronous validation, for effect...
-    process.nextTick(function () {
-      // check nonces in params here, if desired
-      return done(null, true);
-    });
-  }
-));
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -116,8 +82,12 @@ passport.use(new DigestStrategy({ qop: 'auth' },
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   console.log('Unauthorized request sent');
+  accessDenied(res);
+}
+
+function accessDenied(res){
   res.writeHead(401, {'content-type':'text/plain'});
-  res.write("Unauthorized");
+  res.write("ahh ahh ahh, not without the password!");
   res.end();
 }
 
@@ -129,12 +99,13 @@ var app = express();
 
 // Config
 app.configure(function () {
+  app.use(express.logger());
   app.use(express.bodyParser());
   app.use(express.cookieParser());
   app.use(express.methodOverride());
   app.use(express.session({ secret: 'my super secret password is 12345' }));
   app.use(passport.initialize());
-  // app.use(passport.session()); // Not needed for Digest Strategy
+  app.use(passport.session());
   app.use(app.router);
   app.use(express.static(path.join(application_root, "public")));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -168,44 +139,12 @@ app.get('/', function (req, res) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // POST /login
-// app.post('/login', function(req, res, next) {
-
-//   user = req.body.user;
-
-//   if (typeof user === 'undefined'){
-//     console.log('No user passed into login');
-//     res.writeHead(400, {'content-type':'text/plain'});
-//     res.write("Missing Parameters");
-//     res.end();
-//   } else {
-//     passport.authenticate('local', function(err, user, info) {
-//       console.dir(user);
-//       process.reallyExit();
-//       if (err) { return next(err) }
-//       if (!user) {
-//         // Login Error
-//         console.log('Login Failed');
-//         res.writeHead(401, {'content-type':'text/plain'});
-//         res.write("Unauthorized");
-//         res.end();
-//       }
-//       req.logIn(user, function(err) {
-//         if (err) { return next(err); }
-//         // Login Success
-//         res.writeHead(200,{"Content-Type":"text/plain"});
-//         res.write("Authenticated");
-//         res.end();
-//       });
-//     })(req, res, next);
-//   }
-// });
-
 app.post('/login',
-  // Authenticate using HTTP Digest credentials, with session support disabled.
-  passport.authenticate('digest', { session: false }),
-  function(req, res){
-    console.log('Success!');
-    res.json({ username: req.user.username, email: req.user.email });
+  passport.authenticate('local', { session: false }),
+  function(req, res) {
+    res.writeHead(200,{"Content-Type":"text/plain"});
+    res.write("Authenticated! ");
+    res.end();
   });
 
 /**

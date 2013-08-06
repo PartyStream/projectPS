@@ -79,11 +79,14 @@ function getUserByNameForAuth(username,client,fn)
 
   // return the user retrieved
   query.on('row', function(row){
+    console.dir(row);
+    console.log("Row");
     fn(null,row);
   });
 
   query.on('error',function(err) {
-      fn(new Error('User ' + id + ' does not exist'));
+    console.log("Error");
+    fn(null,false);
   });
 
 }// END function getUserByNameForAuth
