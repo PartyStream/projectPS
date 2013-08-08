@@ -138,6 +138,7 @@ app.get('/', function (req, res) {
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
+// This function will be used to issue auth tokens
 // POST /login
 app.post('/login',
   passport.authenticate('local', { session: false }),
@@ -236,7 +237,6 @@ app.get('/events/:eventId/invite/:userId' ,
   function (req,res){
     eventInvite.inviteAUser(res,req.params.eventId,req.params.userId,client);
 });
-
 // Invite many users to an event
 app.post('/events/:eventId/invite' ,
   passport.authenticate('local', { session: false }),
@@ -286,7 +286,6 @@ app.delete('/photos/:eventId/:pictureId',
       client,
       s3);
 });
-
 
 // Launch server
 console.log('Listening on port: '+ port);
