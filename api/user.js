@@ -32,7 +32,7 @@ function getUserByIdForAuth(userId,client,fn)
 
   query = client.query({
     name: 'read user',
-    text: "SELECT * from users WHERE id = $1",
+    text: "SELECT username,password from users WHERE id = $1",
     values: [userId]
   });
 
@@ -42,7 +42,8 @@ function getUserByIdForAuth(userId,client,fn)
   });
 
   query.on('error',function(err) {
-      fn(new Error('User ' + id + ' does not exist'));
+    console.log('DB Error: '+err);
+    fn(new Error('User ' + id + ' does not exist'));
   });
 
 }// END function getUserByIdForAuth
@@ -72,17 +73,20 @@ function getUserByNameForAuth(username,client,fn)
 
   query = client.query({
     name: 'read user',
-    text: "SELECT * from users WHERE username = $1",
+    text: "SELECT username,password from users WHERE username = $1",
     values: [username]
   });
 
   // return the user retrieved
   query.on('row', function(row){
+    console.dir(row);
+    console.log("Row");
     fn(null,row);
   });
 
   query.on('error',function(err) {
-      fn(new Error('User ' + id + ' does not exist'));
+    console.log("Error");
+    fn(null,false);
   });
 
 }// END function getUserByNameForAuth
