@@ -23,7 +23,7 @@ var application_root = __dirname,
     AWS              = require('aws-sdk'),
     client           = new pg.Client(process.env.DATABASE_URL),
     passport         = require("passport"),
-    LocalStrategy    = require('passport-local').Strategy;;
+    LocalStrategy    = require('passport-local').Strategy;
 
 AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY});
 AWS.config.update({region: 'us-east-1'});
@@ -36,23 +36,18 @@ client.connect();
 // ==================
 // = PASSPORT START =
 // ==================
-
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
 //   this will be as simple as storing the user ID when serializing, and finding
 //   the user by ID when deserializing.
-passport.serializeUser(function(user, done) {
-  if (typeof user.id === 'undefined'){
-    done(null,null);
-  } else {
-    done(null, (user.id).toString());
 
-  }
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  user.getUserByIdForAuth(id,client, function (err, user) {
+  findById(id, function (err, user) {
     done(err, user);
   });
 });
@@ -68,15 +63,16 @@ passport.use(new LocalStrategy(
       // indicate failure and set a flash message.  Otherwise, return the
       // authenticated `user`.
       user.getUserByNameForAuth(username,client, function(err, user) {
-        console.log('Getting user for auth');
+        console.log('Got response for User in DB');
         if (err) { return done(err); }
         if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
         if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
         return done(null, user);
-      })
+      });
     });
   }
 ));
+
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -86,8 +82,12 @@ passport.use(new LocalStrategy(
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   console.log('Unauthorized request sent');
+  accessDenied(res);
+}
+
+function accessDenied(res){
   res.writeHead(401, {'content-type':'text/plain'});
-  res.write("Unauthorized");
+  res.write("ahh ahh ahh, not without the password!");
   res.end();
 }
 
@@ -99,6 +99,7 @@ var app = express();
 
 // Config
 app.configure(function () {
+  app.use(express.logger());
   app.use(express.bodyParser());
   app.use(express.cookieParser());
   app.use(express.methodOverride());
@@ -137,38 +138,16 @@ app.get('/', function (req, res) {
 +++                                             +++
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
+// This function will be used to issue auth tokens
 // POST /login
-app.post('/login', function(req, res, next) {
-
-  user = req.body.user;
-
-  if (typeof user === 'undefined'){
-    console.log('No user passed into login');
-    res.writeHead(400, {'content-type':'text/plain'});
-    res.write("Missing Parameters");
+app.post('/login',
+  passport.authenticate('local', { session: false }),
+  function(req, res) {
+    res.writeHead(200,{"Content-Type":"text/plain"});
+    res.write("Authenticated! ");
     res.end();
-  } else {
-    passport.authenticate('local', function(err, user, info) {
-      console.dir(user);
-      process.reallyExit();
-      if (err) { return next(err) }
-      if (!user) {
-        // Login Error
-        console.log('Login Failed');
-        res.writeHead(401, {'content-type':'text/plain'});
-        res.write("Unauthorized");
-        res.end();
-      }
-      req.logIn(user, function(err) {
-        if (err) { return next(err); }
-        // Login Success
-        res.writeHead(200,{"Content-Type":"text/plain"});
-        res.write("Authenticated");
-        res.end();
-      });
-    })(req, res, next);
-  }
-});
+  });
+
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 +++                                             +++
@@ -177,27 +156,39 @@ app.post('/login', function(req, res, next) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/users', function (req,res){
-  user.createUser(res,req.body.user,client);
+app.post('/users',
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    user.createUser(res,req.body.user,client);
 });
 // Read User
-app.get('/users/:id', function (req,res) {
+app.get('/users/:id',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
     user.readUser(res,req.params.id,client);
 });
 // Read Users
-app.get('/users', function (req,res) {
+app.get('/users',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
     user.readUsers(res,client);
 });
 // Update
-app.put('/users/:id', function (req,res){
-  user.updateUser(res,req.params.id, req.body.user,client);
+app.put('/users/:id',
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    user.updateUser(res,req.params.id, req.body.user,client);
 });
 // Delete
-app.delete('/users/:id', function (req,res) {
-  user.deleteUser(res,req.params.id,client);
+app.delete('/users/:id',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
+    user.deleteUser(res,req.params.id,client);
 });
 // Get events for a user
-app.get('/users/:id/events', function (req,res) {
+app.get('/users/:id/events',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
     event.getEvents(res,req.params.id,client);
 });
 
@@ -209,20 +200,28 @@ app.get('/users/:id/events', function (req,res) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/events', function (req,res){
-  event.createEvent(res,req.body.event,client);
+app.post('/events',
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    event.createEvent(res,req.body.event,client);
 });
 // Read Event
-app.get('/events/:id', function (req,res) {
+app.get('/events/:id',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
     event.readEvent(res,req.params.id,client);
 });
 // Update
-app.put('/events/:id', function (req,res){
-  event.updateEvent(res,req.params.id,req.body.event,client);
+app.put('/events/:id',
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    event.updateEvent(res,req.params.id,req.body.event,client);
 });
 // Delete
-app.delete('/events/:id', function (req,res) {
-  event.deleteEvent(res,req.params.id,client);
+app.delete('/events/:id',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
+    event.deleteEvent(res,req.params.id,client);
 });
 
 /**
@@ -233,13 +232,16 @@ app.delete('/events/:id', function (req,res) {
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Invite a user to an event
-app.get('/events/:eventId/invite/:userId' , function (req,res){
-  eventInvite.inviteAUser(res,req.params.eventId,req.params.userId,client);
+app.get('/events/:eventId/invite/:userId' ,
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    eventInvite.inviteAUser(res,req.params.eventId,req.params.userId,client);
 });
-
 // Invite many users to an event
-app.post('/events/:eventId/invite' , function (req,res){
-  eventInvite.inviteManyUser(res,req.params.eventId,req.body.users,client);
+app.post('/events/:eventId/invite' ,
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    eventInvite.inviteManyUser(res,req.params.eventId,req.body.users,client);
 });
 
 /**
@@ -250,32 +252,40 @@ app.post('/events/:eventId/invite' , function (req,res){
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 // Create
-app.post('/photos', function (req,res){
-  pictures.createPicture(res,req.body.eventId,req.body.userId,req.files.picture,s3,client);
+app.post('/photos',
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    pictures.createPicture(res,req.body.eventId,req.body.userId,req.files.picture,s3,client);
 });
 // Read Pictures For Event
-app.get('/events/:eventId/photos', function (req,res) {
+app.get('/events/:eventId/photos',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
     pictures.readPictures(res,req.params.eventId,client);
 });
 // Read A Picture
-app.get('/photos/:eventId/:pictureId', function (req,res) {
+app.get('/photos/:eventId/:pictureId',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
     pictures.readPicture(res,req.params.eventId,req.params.pictureId,client,s3);
 });
 // Update
-app.put('/photos/:id', function (req,res){
-  pictures.updatePicture(res,req.params.id,client,req.body.photo);
+app.put('/photos/:id',
+  passport.authenticate('local', { session: false }),
+  function (req,res){
+    pictures.updatePicture(res,req.params.id,client,req.body.photo);
 });
 // Delete
-app.delete('/photos/:eventId/:pictureId', function (req,res) {
-  pictures.deletePicture(
-    res,
-    req.params.eventId,
-    req.params.pictureId,
-    client,
-    s3);
+app.delete('/photos/:eventId/:pictureId',
+  passport.authenticate('local', { session: false }),
+  function (req,res) {
+    pictures.deletePicture(
+      res,
+      req.params.eventId,
+      req.params.pictureId,
+      client,
+      s3);
 });
-
-
 
 // Launch server
 console.log('Listening on port: '+ port);
