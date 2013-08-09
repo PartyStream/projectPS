@@ -41,18 +41,16 @@ function createPicture(response,eventId,creator,picture,s3,client)
     // create record in DB for picture and get back ID
     console.log('Inserting image into DB');
 
-    //create hash object using sha256
-    hash = crypto.createHash('sha256');
+    //create hash object using sha1
+    hash = crypto.createHash('sha1');
     //update the hash using a unique string
     hash.update(creator + picture.name + timestampMS);
     hashDigest = hash.digest('hex');
 
-    console.log('This is the hash: ' + hashDigest);
-
     query = client.query({
       name: 'insert picture',
-      text: "INSERT INTO pictures (name,owner,url,date_created) values ($1,$2,$3,current_timestamp) RETURNING id",
-      values: [picture.name, creator,url]
+      text: "INSERT INTO pictures (name,owner,url,hash,date_created) values ($1,$2,$3,$4,current_timestamp) RETURNING id",
+      values: [picture.name, creator, url, hashDigest]
     });
 
     query.on('error',function(err) {
