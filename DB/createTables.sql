@@ -59,6 +59,7 @@ owner INTEGER,
 date_created TIMESTAMPTZ DEFAULT NOW(),
 date_updated TIMESTAMPTZ,
 url VARCHAR(150),
+hash VARCHAR(40) NOT NULL,
 PRIMARY KEY (id)
 );
 
