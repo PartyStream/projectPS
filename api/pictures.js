@@ -30,12 +30,13 @@
 **/
 function createPicture(response,eventId,creator,picture,s3,client)
 {
-    var awsS3       = require('./amazonS3');
-    var fs          = require('fs');
-    var crypto      = require('crypto');
-    var hash        = {};
-    var timestampMS = Date.now();
-    var hashDigest  = "";
+    var awsS3         = require('./amazonS3');
+    var fs            = require('fs');
+    var crypto        = require('crypto');
+    var hash          = {};
+    var timestampMS   = Date.now();
+    var hashDigest    = "";
+    var fileExtension = "";
     var url;
 
     // create record in DB for picture and get back ID
@@ -70,7 +71,10 @@ function createPicture(response,eventId,creator,picture,s3,client)
         pictureId = row;
         console.log('Inserted picture ID: '+pictureId.id);
 
-        url = 'https://s3.amazonaws.com/'+bucket+'/'+eventId+'/'+pictureId.id+'.png';
+        //get uploaded picture's extension
+        fileExtenstion = path.extname(picture.name);
+
+        url = 'https://s3.amazonaws.com/'+bucket+'/'+eventId+'/'+hashDigest+fileExtenstion;
 
         // Create event relation in picture_events join table
         console.log('Creating relation between picture and event');
@@ -118,8 +122,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
             }
             else
             {
-                // TODO dynamically get file format
-                var fileName = pictureId.id + ".png";
+                var fileName = hashDigest+fileExtenstion;
                 var key      = eventId+'/'+fileName;
                 var body     = data;
                 var params   = {
