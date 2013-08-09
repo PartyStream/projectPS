@@ -10,8 +10,8 @@ DROP TABLE comments CASCADE;
 
 CREATE TABLE picture_events
 (
-picture_id INTEGER,
-event_id INTEGER
+picture_id INTEGER NOT NULL,
+event_id INTEGER NOT NULL
 );
 
 CREATE TABLE comments
