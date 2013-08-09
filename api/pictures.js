@@ -126,10 +126,11 @@ function createPicture(response,eventId,creator,picture,s3,client)
                 var key      = eventId+'/'+fileName;
                 var body     = data;
                 var params   = {
-                    "ACL"   : "public-read",
-                    "Body"  : body,
-                    "Bucket": bucket,
-                    "Key"   : key
+                    "ACL"         : "public-read",
+                    "Body"        : body,
+                    "Bucket"      : bucket,
+                    "Key"         : key,
+                    "ContentType" : picture.type
                 };
 
                 console.log("Object to be put:");
