@@ -25,7 +25,10 @@ var application_root = __dirname,
     passport         = require("passport"),
     LocalStrategy    = require('passport-local').Strategy;
 
-AWS.config.update({accessKeyId: process.env.AWS_ACCESS_KEY, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY});
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 AWS.config.update({region: 'us-east-1'});
 
 var s3 = new AWS.S3();
@@ -65,8 +68,12 @@ passport.use(new LocalStrategy(
       user.getUserByNameForAuth(username,client, function(err, user) {
         console.log('Got response for User in DB');
         if (err) { return done(err); }
-        if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
-        if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
+        if (!user) {
+          return done(null, false, { message: 'Unknown user ' + username });
+        }
+        if (user.password != password) {
+          return done(null, false, { message: 'Invalid password' });
+        }
         return done(null, user);
       });
     });
@@ -255,7 +262,14 @@ app.post('/events/:eventId/invite' ,
 app.post('/photos',
   passport.authenticate('local', { session: false }),
   function (req,res){
-    pictures.createPicture(res,req.body.eventId,req.body.userId,req.files.picture,s3,client);
+    pictures.createPicture(
+      res,
+      req.body.eventId,
+      req.body.userId,
+      req.files.picture,
+      s3,
+      client
+    );
 });
 // Read Pictures For Event
 app.get('/events/:eventId/photos',
@@ -267,7 +281,13 @@ app.get('/events/:eventId/photos',
 app.get('/photos/:eventId/:pictureId',
   passport.authenticate('local', { session: false }),
   function (req,res) {
-    pictures.readPicture(res,req.params.eventId,req.params.pictureId,client,s3);
+    pictures.readPicture(
+      res,
+      req.params.eventId,
+      req.params.pictureId,
+      client,
+      s3
+    );
 });
 // Update
 app.put('/photos/:id',
