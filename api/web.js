@@ -10,9 +10,20 @@
 //
 **/
 
+// =================
+// = LOAD ENV VARS =
+// =================
+var nconf = require('nconf');
+
+nconf.env();
+nconf.argv();
+nconf.file({ file: 'local.json' });
+
+console.log('Environment: ' + nconf.get('NODE_ENV'));
+
 var application_root = __dirname,
     express          = require("express"),
-    port             = process.env.PORT || 4482;
+    port             = nconf.get('PORT');
     path             = require("path"),
     url              = require("url") ,
     user             = require('./user'),
@@ -21,13 +32,13 @@ var application_root = __dirname,
     pictures         = require('./pictures'),
     pg               = require('pg').native,
     AWS              = require('aws-sdk'),
-    client           = new pg.Client(process.env.DATABASE_URL),
+    client           = new pg.Client(nconf.get('DATABASE_URL')),
     passport         = require("passport"),
     LocalStrategy    = require('passport-local').Strategy;
 
 AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  accessKeyId: nconf.get('AWS_ACCESS_KEY'),
+  secretAccessKey: nconf.get('AWS_SECRET_ACCESS_KEY')
 });
 AWS.config.update({region: 'us-east-1'});
 
