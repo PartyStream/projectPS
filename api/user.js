@@ -115,8 +115,16 @@ function createUser(response,userObject,client)
 
   query = client.query({
     name: 'insert user',
-    text: "INSERT INTO users(username,status,password,date_created,first_name,last_name,dob,email) values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
-    values: [user.username, user.password, user.first_name, user.last_name, user.dob, user.email]
+    text: "INSERT INTO users("+
+      "username,status,password,date_created,first_name,last_name,dob,email)"+
+      "values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
+    values: [ user.username,
+              user.password,
+              user.first_name,
+              user.last_name,
+              user.dob,
+              user.email
+            ]
   });
 
   query.on('error',function(err) {
@@ -158,7 +166,10 @@ function readUser(response,userId,client)
 
   query = client.query({
     name: 'read a user',
-    text: "SELECT id,status,username,email,first_name,last_name,dob,date_created,date_updated from users WHERE id = $1",
+    text: "SELECT id,status,username,email,first_name,last_name,dob,"+
+            "date_created,date_updated"+
+            "FROM users"+
+            "WHERE id = $1",
     values: [userId]
   });
 
@@ -177,7 +188,10 @@ function readUser(response,userId,client)
       } else {
         var json = JSON.stringify(data);
         console.log(json);
-        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+        response.writeHead(200, {
+          'content-type':'application/json',
+          'content-length':json.length
+        });
         response.end(json);
       }
     });
@@ -225,7 +239,12 @@ function readUsers(response,client)
     // client.end();
     var json = JSON.stringify(data);
     console.log(json);
-    response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
+    response.writeHead(
+      200,
+      {
+        'content-type':'application/json',
+        'content-length':json.length
+      });
     response.end(json);
   });
 
@@ -261,7 +280,9 @@ function updateUser(response,userId,userObject,client)
 
   query = client.query({
     name: 'update user',
-    text: "UPDATE users SET first_name = $1,last_name = $2, dob = $3 WHERE id = $4",
+    text: "UPDATE users"+
+            "SET first_name = $1,last_name = $2, dob = $3"+
+            "WHERE id = $4",
     values: [user.firstName, user.lastName, user.dob, userId]
   });
 
@@ -277,7 +298,6 @@ function updateUser(response,userId,userObject,client)
       response.write("User Updated!");
       response.end();
   });
-
 
 }// END function updateUser
 exports.updateUser = updateUser;
