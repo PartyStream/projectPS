@@ -292,7 +292,13 @@ app.post('/photos',
 app.get('/events/:eventId/photos',
   passport.authenticate('local', { session: false }),
   function (req,res) {
-    pictures.readPictures(res,req.params.eventId,client);
+    pictures.readPictures(
+      res,
+      req.params.eventId,
+      client,
+      req.query.start,
+      req.query.limit
+    );
 });
 // Read A Picture
 app.get('/photos/:eventId/:pictureId',
