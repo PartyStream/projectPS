@@ -26,13 +26,13 @@ describe('Get /api', function(){
 });
 
 // Getting All Users
-describe('Get /users', function(){
-    it('should respond OK',function(done){
-        request(app)
-        .get('/users')
-        .end(function(err, res){
-          res.status.should.equal(200);
-          done(err);
-        });
-    });
-});
+// describe('Get /users', function(){
+//     it('should respond OK',function(done){
+//         request(app)
+//         .get('/users?username=jsnow&password=test')
+//         .end(function(err, res){
+//           res.status.should.equal(200);
+//           done(err);
+//         });
+//     });
+// });
