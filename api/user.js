@@ -218,8 +218,10 @@ exports.readUser = readUser;
 +
 +  \return JSON ARRAY of all user objects, False otherwise
 **/
-function readUsers(response,client)
+function readUsers(response,client,start,limit)
 {
+  if(typeof(start)==='undefined') start = 1;
+  if(typeof(limit)==='undefined') limit = 25;
   console.log('Getting all users');
 
   var query;
@@ -227,9 +229,11 @@ function readUsers(response,client)
 
   query = client.query({
     name: 'read users',
-    text: "SELECT * from users"
+    text: "SELECT * from users limit $1 offset $2",
+    values: [limit,start]
   });
 
+console.dir(query);
    // return the user retrieved
   query.on('row', function(row) {
       data.push(row);

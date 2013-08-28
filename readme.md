@@ -1,6 +1,9 @@
 Party Stream API
 =============
 
+[![Build Status](https://magnum.travis-ci.com/iToto/projectPS.png?token=NzhenBbJTpBpxG5heUhe&branch=develop)](https://magnum.travis-ci.com/iToto/projectPS)
+
+
 This is the API for the Party Stream project. It is a RESTFul API that runs on Node.js and on Heroku's servers.
 
 To run the API, from the project root run:
