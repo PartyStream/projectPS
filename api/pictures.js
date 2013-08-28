@@ -173,8 +173,10 @@ exports.createPicture = createPicture;
 +
 +   \return JSON ARRAY of all picture objects, False otherwise
 **/
-function readPictures(response,eventId,client)
+function readPictures(response,eventId,client,start,limit)
 {
+    if(typeof(start)==='undefined') start = 1;
+    if(typeof(limit)==='undefined') limit = 25;
     console.log('Getting all pictures for event: '+ eventId);
 
     var query;
@@ -184,13 +186,14 @@ function readPictures(response,eventId,client)
         sql += "JOIN picture_events pe ON p.id = pe.picture_id ";
         sql += "JOIN events e ON e.id = pe.event_id ";
         sql += "WHERE e.id = $1";
+        sql += "LIMIT $2 OFFSET $3";
 
     console.log("QUERY: "+sql);
 
     query = client.query({
         name: 'read pictures',
         text: sql,
-        values: [eventId]
+        values: [eventId,limit,start]
     });
 
      // return the pictures retrieved
