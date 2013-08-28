@@ -15,5 +15,8 @@
   "engines": {
     "node": "0.10.9",
     "npm": "1.2.24"
+  },
+  "scripts": {
+    "test" : "mocha"
   }
 }
