@@ -16,7 +16,8 @@
 +       This function will create a picture object
 +
 +   \author Salvatore D'Agostino
-+   \date  2012-12-09 15:41
++   \author Robbie Caputo
++   \date  2013-07-25 21:10
 +   \param response   (HTTP)    The response to return to the client
 +   \param eventId    (STRING)  The name of the event for this file
 +   \param creator    (STRING)  The ID of the creator
@@ -29,17 +30,28 @@
 **/
 function createPicture(response,eventId,creator,picture,s3,client)
 {
-    var awsS3 = require('./amazonS3');
-    var fs    = require('fs');
+    var awsS3         = require('./amazonS3');
+    var fs            = require('fs');
+    var crypto        = require('crypto');
+    var hash          = {};
+    var timestampMS   = Date.now();
+    var hashDigest    = "";
+    var fileExtension = "";
     var url;
 
     // create record in DB for picture and get back ID
     console.log('Inserting image into DB');
 
+    //create hash object using sha1
+    hash = crypto.createHash('sha1');
+    //update the hash using a unique string
+    hash.update(creator + picture.name + timestampMS);
+    hashDigest = hash.digest('hex');
+
     query = client.query({
       name: 'insert picture',
-      text: "INSERT INTO pictures (name,owner,url,date_created) values ($1,$2,$3,current_timestamp) RETURNING id",
-      values: [picture.name, creator,url]
+      text: "INSERT INTO pictures (name,owner,url,hash,date_created) values ($1,$2,$3,$4,current_timestamp) RETURNING id",
+      values: [picture.name, creator, url, hashDigest]
     });
 
     query.on('error',function(err) {
@@ -59,7 +71,10 @@ function createPicture(response,eventId,creator,picture,s3,client)
         pictureId = row;
         console.log('Inserted picture ID: '+pictureId.id);
 
-        url = 'https://s3.amazonaws.com/'+bucket+'/'+eventId+'/'+pictureId.id+'.png';
+        //get uploaded picture's extension
+        fileExtenstion = path.extname(picture.name);
+
+        url = 'https://s3.amazonaws.com/'+bucket+'/'+eventId+'/'+hashDigest+fileExtenstion;
 
         // Create event relation in picture_events join table
         console.log('Creating relation between picture and event');
@@ -107,15 +122,15 @@ function createPicture(response,eventId,creator,picture,s3,client)
             }
             else
             {
-                // TODO dynamically get file format
-                var fileName = pictureId.id + ".png";
+                var fileName = hashDigest+fileExtenstion;
                 var key      = eventId+'/'+fileName;
                 var body     = data;
                 var params   = {
-                    "ACL"   : "public-read",
-                    "Body"  : body,
-                    "Bucket": bucket,
-                    "Key"   : key
+                    "ACL"         : "public-read",
+                    "Body"        : body,
+                    "Bucket"      : bucket,
+                    "Key"         : key,
+                    "ContentType" : picture.type
                 };
 
                 console.log("Object to be put:");
@@ -158,8 +173,10 @@ exports.createPicture = createPicture;
 +
 +   \return JSON ARRAY of all picture objects, False otherwise
 **/
-function readPictures(response,eventId,client)
+function readPictures(response,eventId,client,start,limit)
 {
+    if(typeof(start)==='undefined') start = 1;
+    if(typeof(limit)==='undefined') limit = 25;
     console.log('Getting all pictures for event: '+ eventId);
 
     var query;
@@ -169,13 +186,14 @@ function readPictures(response,eventId,client)
         sql += "JOIN picture_events pe ON p.id = pe.picture_id ";
         sql += "JOIN events e ON e.id = pe.event_id ";
         sql += "WHERE e.id = $1";
+        sql += "LIMIT $2 OFFSET $3";
 
     console.log("QUERY: "+sql);
 
     query = client.query({
         name: 'read pictures',
         text: sql,
-        values: [eventId]
+        values: [eventId,limit,start]
     });
 
      // return the pictures retrieved
