@@ -1,7 +1,13 @@
 Party Stream API
 =============
 
-[![Build Status](https://magnum.travis-ci.com/iToto/projectPS.png?token=NzhenBbJTpBpxG5heUhe&branch=develop)](https://magnum.travis-ci.com/iToto/projectPS)
+## Status
+
+### Master
+[![Build Status](https://magnum.travis-ci.com/PartyStream/projectPS.png?token=NzhenBbJTpBpxG5heUhe&branch=master)](https://magnum.travis-ci.com/PartyStream/projectPS)
+
+### Develop
+[![Build Status](https://magnum.travis-ci.com/PartyStream/projectPS.png?token=NzhenBbJTpBpxG5heUhe&branch=develop)](https://magnum.travis-ci.com/PartyStream/projectPS)
 
 
 
