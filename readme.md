@@ -1,7 +1,7 @@
 Party Stream API
 =============
 
-[![Build Status](https://travis-ci.org/PartyStream/projectPS.png)](https://travis-ci.org/PartyStream/projectPS)
+[![Build Status](https://travis-ci.org/iToto/projectPS.png)](https://travis-ci.org/iToto/projectPS)
 
 
 This is the API for the Party Stream project. It is a RESTFul API that runs on Node.js and on Heroku's servers.
