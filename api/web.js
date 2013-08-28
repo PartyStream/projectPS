@@ -189,7 +189,7 @@ app.get('/users/:id',
 app.get('/users',
   passport.authenticate('local', { session: false }),
   function (req,res) {
-    user.readUsers(res,client);
+    user.readUsers(res,client,req.query.start,req.query.limit);
 });
 // Update
 app.put('/users/:id',
@@ -207,7 +207,13 @@ app.delete('/users/:id',
 app.get('/users/:id/events',
   passport.authenticate('local', { session: false }),
   function (req,res) {
-    event.getEvents(res,req.params.id,client);
+    event.getEvents(
+      res,
+      req.params.id,
+      client,
+      req.query.start,
+      req.query.limit
+    );
 });
 
 /**
