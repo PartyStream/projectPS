@@ -29,7 +29,7 @@ describe('Get /api', function(){
 describe('Get /users', function(){
     it('should respond OK',function(done){
         request(app)
-        .get('/users')
+        .get('/users?username=jsnow&password=test')
         .end(function(err, res){
           res.status.should.equal(200);
           done(err);
