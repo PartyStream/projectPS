@@ -141,8 +141,10 @@ exports.readEvent = readEvent;
 +
 +   \return Array of even objects
 **/
-function getEvents(response,userId,client)
+function getEvents(response,userId,client,start,limit)
 {
+    if(typeof(start)==='undefined') start = 1;
+    if(typeof(limit)==='undefined') limit = 25;
     console.log('Get all events for user: ' + userId);
 
     var query;
@@ -150,8 +152,11 @@ function getEvents(response,userId,client)
 
     query = client.query({
       name: 'getEvents',
-      text: "SELECT * FROM events AS e JOIN event_users AS eu ON eu.event_id = e.id WHERE eu.user_id = $1",
-      values: [userId]
+      text: "SELECT * FROM events AS e "+
+            "JOIN event_users AS eu ON eu.event_id = e.id "+
+            "WHERE eu.user_id = $1"+
+            "LIMIT $2 OFFSET $3",
+      values: [userId,limit,start]
     });
 
     query.on('error',function(err) {

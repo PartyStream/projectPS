@@ -1,7 +1,9 @@
 Party Stream API
 =============
 
-Party Stream is a free application that allows you to share pictures from events with your friends and family.
+[![Build Status](https://magnum.travis-ci.com/iToto/projectPS.png?token=NzhenBbJTpBpxG5heUhe&branch=develop)](https://magnum.travis-ci.com/iToto/projectPS)
+
+
 
 This is the API for the Party Stream system which is RESTFul and built in Node.js.
 

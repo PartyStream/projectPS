@@ -1,0 +1,8 @@
+{
+    "NODE_ENV":"test",
+    "PORT":5001,
+    "DATABASE_URL":"",
+    "HEROKU_POSTGRESQL_GOLD_URL":"",
+    "PATH":"bin:node_modules/.bin:/usr/local/bin:/usr/bin:/bin",
+    "S3_BUCKET_NAME":"projectPS"
+}

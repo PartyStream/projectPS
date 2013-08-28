@@ -10,8 +10,8 @@ DROP TABLE comments CASCADE;
 
 CREATE TABLE picture_events
 (
-picture_id INTEGER,
-event_id INTEGER
+picture_id INTEGER NOT NULL,
+event_id INTEGER NOT NULL
 );
 
 CREATE TABLE comments
@@ -59,6 +59,7 @@ owner INTEGER,
 date_created TIMESTAMPTZ DEFAULT NOW(),
 date_updated TIMESTAMPTZ,
 url VARCHAR(150),
+hash VARCHAR(40) NOT NULL,
 PRIMARY KEY (id)
 );
 

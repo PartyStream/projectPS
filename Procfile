@@ -1,1 +1,1 @@
-web: node api/web.js
+web: $WEB
