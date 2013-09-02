@@ -108,40 +108,42 @@ exports.getUserByNameForAuth = getUserByNameForAuth;
 function createUser(response,userObject,client)
 {
   var user   = JSON.parse(userObject);
+  var bcrypt = require('bcrypt-nodejs');
 
   console.log('Creating user');
   console.dir(user);
-  var query;
+  // Hash Password
+  bcrypt.hash(user.password, null, null, function(err, hash) {
+    if (err) {throw err};
+    var query;
+    query = client.query({
+      name: 'insert user',
+      text: "INSERT INTO users("+
+        "username,status,password,date_created,first_name,last_name,dob,email)"+
+        "values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
+      values: [ user.username,
+                hash,
+                user.first_name,
+                user.last_name,
+                user.dob,
+                user.email
+              ]
+    });
 
-  query = client.query({
-    name: 'insert user',
-    text: "INSERT INTO users("+
-      "username,status,password,date_created,first_name,last_name,dob,email)"+
-      "values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
-    values: [ user.username,
-              user.password,
-              user.first_name,
-              user.last_name,
-              user.dob,
-              user.email
-            ]
+    query.on('error',function(err) {
+      console.log('Unable to create user: '+ err);
+      response.writeHead(500, {'content-type':'text/plain'});
+      response.write("Could not create User");
+      response.end();
+    });
+
+    // Send response to client
+    query.on('end', function(result){
+      response.writeHead(200,{"Content-Type":"text/plain"});
+      response.write("Create User! ");
+      response.end();
+    });
   });
-
-  query.on('error',function(err) {
-    console.log('Unable to create user: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.write("Could not create User");
-    response.end();
-  });
-
-  // Send response to client
-  query.on('end', function(result){
-    response.writeHead(200,{"Content-Type":"text/plain"});
-    response.write("Create User! ");
-    response.end();
-  });
-
-
 }// END function createUser
 exports.createUser = createUser;
 
@@ -153,33 +155,32 @@ exports.createUser = createUser;
 +   \author Salvatore D'Agostino
 +   \date  2012-10-14 21:44
 +   \param response  The response to return to the client
-+   \param userId    The ID of the user to get
++   \param username  The username of the user to get
 +   \param client    (PSQL) PSQL client object
 +
 +   \return User object, False otherwise
 **/
-function readUser(response,userId,client)
+function readUser(response,username,client)
 {
-  console.log('Reading user: ' + userId);
+  console.log('Reading user: ' + username);
 
   var query, data = [];
 
   query = client.query({
     name: 'read a user',
     text: "SELECT id,status,username,email,first_name,last_name,dob,"+
-            "date_created,date_updated"+
-            "FROM users"+
-            "WHERE id = $1",
-    values: [userId]
+            "date_created,date_updated "+
+            "FROM users "+
+            "WHERE username = $1",
+    values: [username]
   });
 
   // return the user retrieved
   query.on('row', function(row){
-      data.push(row);
+    data.push(row);
   });
 
   query.on('end', function(result) {
-      console.dir(result);
       console.log(result.rowCount + ' rows were received');
       if (result.rowCount == 0) {
         response.writeHead(404, {'content-type':'text/plain'});
