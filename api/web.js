@@ -33,6 +33,7 @@ var application_root = __dirname,
     pg               = require('pg').native,
     AWS              = require('aws-sdk'),
     client           = new pg.Client(nconf.get('DATABASE_URL')),
+    bcrypt           = require('bcrypt-nodejs'),
     passport         = require("passport"),
     LocalStrategy    = require('passport-local').Strategy;
 
@@ -77,15 +78,20 @@ passport.use(new LocalStrategy(
       // indicate failure and set a flash message.  Otherwise, return the
       // authenticated `user`.
       user.getUserByNameForAuth(username,client, function(err, user) {
-        console.log('Got response for User in DB');
-        if (err) { return done(err); }
+        if (err) { throw err };
         if (!user) {
+          console.log('Could not find user with username '+ username);
           return done(null, false, { message: 'Unknown user ' + username });
         }
-        if (user.password != password) {
+        var result = bcrypt.compareSync(password, user.password);
+        if (result) {
+          console.log('User credentials valid');
+          return done(null, user);
+        }
+        else {
+          console.log('Could not compare passwords');
           return done(null, false, { message: 'Invalid password' });
         }
-        return done(null, user);
       });
     });
   }
@@ -166,6 +172,15 @@ app.post('/login',
     res.end();
   });
 
+app.get('/encrypt/:str',
+  function(req,res){
+    bcrypt.hash(req.params.str, null, null, function(err, hash) {
+      res.writeHead(200,{"Content-Type":"text/plain"});
+      res.write(hash);
+      res.end();
+    });
+});
+
 /**
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 +++                                             +++
@@ -180,10 +195,10 @@ app.post('/users',
     user.createUser(res,req.body.user,client);
 });
 // Read User
-app.get('/users/:id',
+app.get('/users/:username',
   passport.authenticate('local', { session: false }),
   function (req,res) {
-    user.readUser(res,req.params.id,client);
+    user.readUser(res,req.params.username,client);
 });
 // Read Users
 app.get('/users',
