@@ -32,7 +32,7 @@ function createEvent(response,eventObject,client)
 
   query = client.query({
     name: 'insert event',
-    text: "INSERT INTO events(name, creator,event_date,date_created) values($1, $2,$3,current_timestamp) RETURNING id",
+    text: "INSERT INTO events(id,status,name, creator,event_date,date_created) values(uuid_generate_v4(),'1',$1, $2,$3,current_timestamp) RETURNING id",
     values: [event.name, event.userId,event.eventDate]
   });
 
@@ -143,7 +143,7 @@ exports.readEvent = readEvent;
 **/
 function getEvents(response,userId,client,start,limit)
 {
-    if(typeof(start)==='undefined') start = 1;
+    if(typeof(start)==='undefined') start = 0;
     if(typeof(limit)==='undefined') limit = 25;
     console.log('Get all events for user: ' + userId);
 
@@ -154,11 +154,10 @@ function getEvents(response,userId,client,start,limit)
       name: 'getEvents',
       text: "SELECT * FROM events AS e "+
             "JOIN event_users AS eu ON eu.event_id = e.id "+
-            "WHERE eu.user_id = $1"+
+            "WHERE eu.user_id = $1 "+
             "LIMIT $2 OFFSET $3",
       values: [userId,limit,start]
     });
-
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
       response.writeHead(500, {'content-type':'text/plain'});
