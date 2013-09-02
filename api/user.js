@@ -221,7 +221,7 @@ exports.readUser = readUser;
 **/
 function readUsers(response,client,start,limit)
 {
-  if(typeof(start)==='undefined') start = 1;
+  if(typeof(start)==='undefined') start = 0;
   if(typeof(limit)==='undefined') limit = 25;
   console.log('Getting all users');
 
