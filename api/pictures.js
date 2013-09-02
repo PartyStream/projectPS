@@ -50,7 +50,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
 
     query = client.query({
       name: 'insert picture',
-      text: "INSERT INTO pictures (name,owner,url,hash,date_created) values ($1,$2,$3,$4,current_timestamp) RETURNING id",
+      text: "INSERT INTO pictures (id,name,owner,url,hash,date_created) values (uuid_generate_v4(),$1,$2,$3,$4,current_timestamp) RETURNING id",
       values: [picture.name, creator, url, hashDigest]
     });
 
