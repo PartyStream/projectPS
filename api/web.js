@@ -92,15 +92,6 @@ passport.use(new LocalStrategy(
           console.log('Could not compare passwords');
           return done(null, false, { message: 'Invalid password' });
         }
-        // bcrypt.compare(password, user.password, function(err, res) {
-        //   if (err) {
-        //     console.log('Could not compare passwords');
-        //     return done(null, false, { message: 'Invalid password' });
-        //   } else {
-        //     console.log('User credentials valid');
-        //     return done(null, user);
-        //   }
-        // });
       });
     });
   }
