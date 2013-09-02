@@ -104,12 +104,12 @@ ALTER TABLE comments ADD FOREIGN KEY (picture_id) REFERENCES pictures (id);
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 **/
 -- USERS
-INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','jsnow','jsnow@email.com','test',current_timestamp,'Jon','Snow','1970-07-03');
-INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','edstark','edstark@email.com','test',current_timestamp,'Eddard','Stark','1970-07-03');
-INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','catstark','catstark@email.com','test',current_timestamp,'Catelyn','Stark','1970-07-03');
-INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','robstark','robstark@email.com','test',current_timestamp,'Robb','Stark','1970-07-03');
-INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','sanstark','sanstark@email.com','test',current_timestamp,'Sansa','Stark','1970-07-03');
-INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','brastark','brastark@email.com','test',current_timestamp,'Bran','Stark','1970-07-03');
+INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','jsnow','jsnow@email.com','$2a$10$/z20j7hc8Clkx0.4v2d5w.VOU7yDBD6nzWsjb5AsbGtCoRt3x4Npy',current_timestamp,'Jon','Snow','1970-07-03');
+INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','edstark','edstark@email.com','$2a$10$/z20j7hc8Clkx0.4v2d5w.VOU7yDBD6nzWsjb5AsbGtCoRt3x4Npy',current_timestamp,'Eddard','Stark','1970-07-03');
+INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','catstark','catstark@email.com','$2a$10$/z20j7hc8Clkx0.4v2d5w.VOU7yDBD6nzWsjb5AsbGtCoRt3x4Npy',current_timestamp,'Catelyn','Stark','1970-07-03');
+INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','robstark','robstark@email.com','$2a$10$/z20j7hc8Clkx0.4v2d5w.VOU7yDBD6nzWsjb5AsbGtCoRt3x4Npy',current_timestamp,'Robb','Stark','1970-07-03');
+INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','sanstark','sanstark@email.com','$2a$10$/z20j7hc8Clkx0.4v2d5w.VOU7yDBD6nzWsjb5AsbGtCoRt3x4Npy',current_timestamp,'Sansa','Stark','1970-07-03');
+INSERT INTO users(status,username,email,password,date_created,first_name,last_name,dob) VALUES('1','brastark','brastark@email.com','$2a$10$/z20j7hc8Clkx0.4v2d5w.VOU7yDBD6nzWsjb5AsbGtCoRt3x4Npy',current_timestamp,'Bran','Stark','1970-07-03');
 
 -- EVENTS
 INSERT INTO events(name,status,creator,date_created) VALUES('Winterfell','1','2',current_timestamp);
