@@ -1,3 +1,5 @@
+restResponse = require("./helpers/response.js");
+
 /**
 //
 //  user.js
@@ -112,37 +114,57 @@ function createUser(response,userObject,client)
 
   console.log('Creating user');
   console.dir(user);
-  // Hash Password
-  bcrypt.hash(user.password, null, null, function(err, hash) {
+
+  // Check if user already exists
+  getUserByNameForAuth(user.username,client,function(err,user){
     if (err) {throw err};
-    var query;
-    query = client.query({
-      name: 'insert user',
-      text: "INSERT INTO users("+
-        "username,status,password,date_created,first_name,last_name,dob,email)"+
-        "values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
-      values: [ user.username,
-                hash,
-                user.first_name,
-                user.last_name,
-                user.dob,
-                user.email
-              ]
-    });
 
-    query.on('error',function(err) {
-      console.log('Unable to create user: '+ err);
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not create User");
-      response.end();
-    });
+    if (!user) {
+      // Hash Password
+      bcrypt.hash(user.password, null, null, function(err, hash) {
+        if (err) {throw err};
+        var query;
+        query = client.query({
+          name: 'insert user',
+          text: "INSERT INTO users("+
+            "username,status,password,date_created,first_name,last_name,dob,email)"+
+            "values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
+          values: [ user.username,
+                    hash,
+                    user.first_name,
+                    user.last_name,
+                    user.dob,
+                    user.email
+                  ]
+        });
 
-    // Send response to client
-    query.on('end', function(result){
-      response.writeHead(200,{"Content-Type":"text/plain"});
-      response.write("Create User! ");
-      response.end();
-    });
+        query.on('error',function(err) {
+          console.log('Unable to create user: '+ err);
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not create user",
+            null);
+        });
+
+        // Send response to client
+        query.on('end', function(result){
+          restResponse.returnRESTResponse(
+            response,
+            false,
+            "User Created",
+            null);
+        });
+      });
+    } else {
+      // User already exists
+      console.log('User already exists!');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Username taken",
+        null);
+    }
   });
 }// END function createUser
 exports.createUser = createUser;
