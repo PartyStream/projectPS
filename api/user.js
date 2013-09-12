@@ -28,24 +28,29 @@ restResponse = require("./helpers/response.js");
 function getUserByIdForAuth(userId,client,fn)
 {
 
-  console.log('Reading user for authentication: ' + userId);
+  console.log('Reading user by id for authentication: ' + userId);
 
   var query;
 
   query = client.query({
     name: 'read user',
-    text: "SELECT username,password from users WHERE id = $1",
+    text: "SELECT username,password FROM users WHERE id = $1",
     values: [userId]
   });
 
   // return the user retrieved
-  query.on('row', function(row){
-    fn(null,row);
+  query.on('end', function(row){
+    console.log(query.text);
+    console.dir(row);
+    if (row.rows.length == 0) {
+      fn(true,false);
+    } else {
+      fn(null,row.rows);
+    }
   });
 
-  query.on('error',function(err) {
-    console.log('DB Error: '+err);
-    fn(new Error('User ' + id + ' does not exist'));
+  query.on('error',function(error){
+    console.dir(error);
   });
 
 }// END function getUserByIdForAuth
@@ -304,30 +309,52 @@ function updateUser(response,userId,userObject,client)
 {
   console.log('updating user: ' + userId);
   var user   = JSON.parse(userObject);
-  console.dir(user);
-  var query;
+  // console.dir(user);
 
-  query = client.query({
-    name: 'update user',
-    text: "UPDATE users"+
-            "SET first_name = $1,last_name = $2, dob = $3"+
-            "WHERE id = $4",
-    values: [user.firstName, user.lastName, user.dob, userId]
+  getUserByIdForAuth(userId,client,function(err,user){
+    if (err) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        user);
+    }
+
+    if (!user) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        null);
+    } else {
+      var query;
+
+      query = client.query({
+        name: 'update user',
+        text: "UPDATE users"+
+                "SET first_name = $1,last_name = $2, dob = $3"+
+                "WHERE id = $4",
+        values: [user.firstName, user.lastName, user.dob, userId]
+      });
+
+      query.on('error',function(err) {
+        restResponse.returnRESTResponse(
+          response,
+          true,
+          "Could not update user",
+          null);
+      });
+
+      query.on('end', function(result) {
+        // Send response to client
+        restResponse.returnRESTResponse(
+          response,
+          false,
+          "Updated user",
+          null);
+      });
+    }
   });
-
-  query.on('error',function(err) {
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not update user");
-      response.end();
-  });
-
-  query.on('end', function(result) {
-    // Send response to client
-      response.writeHead(200,{"Content-Type":"text/plain"});
-      response.write("User Updated!");
-      response.end();
-  });
-
 }// END function updateUser
 exports.updateUser = updateUser;
 
