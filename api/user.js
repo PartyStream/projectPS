@@ -205,24 +205,27 @@ function readUser(response,username,client)
   query.on('end', function(result) {
       console.log(result.rowCount + ' rows were received');
       if (result.rowCount == 0) {
-        response.writeHead(404, {'content-type':'text/plain'});
-        response.write("Oops, we can't process that");
-        response.end();
+        restResponse.returnRESTResponse(
+          response,
+          true,
+          "Oops, we can't process that",
+          null);
       } else {
-        var json = JSON.stringify(data);
-        console.log(json);
-        response.writeHead(200, {
-          'content-type':'application/json',
-          'content-length':json.length
-        });
-        response.end(json);
+        console.log(data);
+        restResponse.returnRESTResponse(
+          response,
+          false,
+          "Found User",
+          data);
       }
     });
 
   query.on('error',function(err) {
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Oops, we can't process that");
-      response.end();
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "Oops, we can't process that",
+      null);
   });
 
 
