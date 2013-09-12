@@ -267,21 +267,20 @@ console.dir(query);
 
   query.on('end', function() {
     // client.end();
-    var json = JSON.stringify(data);
-    console.log(json);
-    response.writeHead(
-      200,
-      {
-        'content-type':'application/json',
-        'content-length':json.length
-      });
-    response.end(json);
+    restResponse.returnRESTResponse(
+      response,
+      false,
+      "User Listing",
+      data);
   });
 
   query.on('error',function(err) {
-    console.log('Unable to read a user: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.end('Could not get users');
+    console.log('Unable to read a users');
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "UNable to read users",
+      data);
   });
 
 }// END function readUsers
