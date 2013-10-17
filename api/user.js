@@ -28,7 +28,7 @@ restResponse = require("./helpers/response.js");
 function getUserByIdForAuth(userId,client,fn)
 {
 
-  console.log('Reading user by id for authentication: ' + userId);
+  console.log('Reading user by ID for authentication: ' + userId);
 
   var query;
 
@@ -40,11 +40,13 @@ function getUserByIdForAuth(userId,client,fn)
 
   // return the user retrieved
   query.on('end', function(row){
-    console.log(query.text);
-    console.dir(row);
+    // console.log(query.text);
+    // console.dir(row);
     if (row.rows.length == 0) {
+      console.log('Could Not Find User');
       fn(true,false);
     } else {
+      console.log('User Found');
       fn(null,row.rows);
     }
   });
@@ -86,8 +88,8 @@ function getUserByNameForAuth(username,client,fn)
 
   // return the user retrieved
   query.on('row', function(row){
-    console.dir(row);
-    console.log("Row");
+    // console.dir(row);
+    // console.log("Row");
     fn(null,row);
   });
 
@@ -311,16 +313,14 @@ function updateUser(response,userId,userObject,client)
   var user   = JSON.parse(userObject);
   // console.dir(user);
 
-  getUserByIdForAuth(userId,client,function(err,user){
+  this.getUserByIdForAuth(userId,client,function(err,user){
     if (err) {
       restResponse.returnRESTResponse(
         response,
         true,
         "User does not exist",
         user);
-    }
-
-    if (!user) {
+    } else if (user === false) {
       restResponse.returnRESTResponse(
         response,
         true,
