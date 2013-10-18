@@ -285,7 +285,7 @@ console.dir(query);
       response,
       true,
       "UNable to read users",
-      data);
+      null);
   });
 
 }// END function readUsers
