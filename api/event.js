@@ -68,7 +68,7 @@ function createEvent(response,eventObject,client)
       // Send response to client
       restResponse.returnRESTResponse(
         response,
-        true,
+        false,
         "Created Event",
         null);
     });
@@ -106,9 +106,11 @@ function readEvent(response,eventId,client)
 
   query.on('error',function(err) {
     console.log('DB Error Caught: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.write("Could not read event");
-    response.end();
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "Could not read event",
+      null);
   });
 
   query.on('row', function(row){
@@ -120,14 +122,19 @@ function readEvent(response,eventId,client)
       console.dir(result);
       console.log(result.rowCount + ' rows were received');
       if (result.rowCount == 0) {
-        response.writeHead(404, {'content-type':'text/plain'});
-        response.write("Oops, we can't process that");
-        response.end();
+        restResponse.returnRESTResponse(
+          response,
+          true,
+          "No Such Event",
+          null);
       } else {
         var json = JSON.stringify(data);
         console.log(json);
-        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-        response.end(json);
+        restResponse.returnRESTResponse(
+          response,
+          false,
+          "Event Details",
+          json);
       }
     });
 
