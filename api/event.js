@@ -38,9 +38,11 @@ function createEvent(response,eventObject,client)
 
   query.on('error',function(err) {
     console.log('DB Error Caught: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.write("Could not create Event");
-    response.end();
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "Could not create Event",
+      null);
   });
 
   query.on('row', function(row) {
@@ -55,16 +57,20 @@ function createEvent(response,eventObject,client)
 
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not assign event to user");
-      response.end();
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Could not assign event to user",
+        null);
     });
 
     query.on('end', function(result){
       // Send response to client
-      response.writeHead(200,{"Content-Type":"text/plain"});
-      response.write("Created Event! ");
-      response.end();
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Created Event",
+        null);
     });
 
 
