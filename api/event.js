@@ -243,7 +243,7 @@ function updateEvent(response,eventId,event,client)
         true,
         "Error updating event",
         null);
-    } else if (result.rowCount === 0) {
+    } else if (result.rowCount === 0 || result.rowCount === null) {
       restResponse.returnRESTResponse(
         response,
         true,
@@ -287,16 +287,30 @@ function deleteEvent(response,eventId,client)
   });
 
   query.on('error',function(err) {
-    console.log('DB Error Caught: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.write("Could delete event");
-    response.end();
+    console.dir(err);
   });
 
   query.on('end', function(result) {
-    response.writeHead(200, {'content-type':'text/plain'});
-    response.write("Event deleted!");
-    response.end();
+    console.dir(result);
+    if (result === false) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Error deleting event",
+        null);
+    } else if (result.rowCount === 0 || result.rowCount === null) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Error deleting event",
+        null);
+    } else {
+      restResponse.returnRESTResponse(
+        response,
+        false,
+        "Event deleted",
+        null);
+    }
   });
 }// END function deleteEvent
 exports.deleteEvent = deleteEvent;
