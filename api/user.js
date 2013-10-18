@@ -44,9 +44,14 @@ function getUserByIdForAuth(userId,client,fn)
     fn(null,row);
   });
 
-  query.on('error',function(err) {
-    console.log("Error: User not found by ID");
-    fn(null,false);
+  query.on('end', function(result){
+    if (result === false) {
+      console.log("Error: User not found by ID");
+      fn(null,false);
+    } else if(result.rowCount === 0) {
+      console.log("Error: User not found by ID");
+      fn(null,false);
+    }
   });
 
 }// END function getUserByIdForAuth
@@ -373,24 +378,47 @@ function deleteUser(response,userId,client)
 {
   console.log('Deleting user: ' + userId);
 
-  var query;
+  this.getUserByIdForAuth(userId,client,function(err,user){
+    if (err) {
+      console.log('Error while deleting user');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        user);
+    } else if (user === false) {
+      console.log('User not found for delete');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        null);
+    } else {
+      var query;
 
-  query = client.query({
-    name: 'delete user',
-    text: "UPDATE users SET status = '0' where id = $1",
-    values: [userId]
-  });
+      query = client.query({
+        name: 'delete user',
+        text: "UPDATE users SET status = '0' where id = $1",
+        values: [userId]
+      });
 
-  query.on('error',function(err) {
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not delete user");
-      response.end();
-  });
-
-  query.on('end', function(result) {
-    response.writeHead(200, {'content-type':'text/plain'});
-    response.write("User deleted!");
-    response.end();
+      query.on('end', function(result) {
+        console.dir(result);
+        if (result === false){
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not delete user",
+            null);
+        } else {
+          restResponse.returnRESTResponse(
+            response,
+            false,
+            "Deleted user",
+            null);
+        }
+      });
+    }
   });
 }// END function deleteUser
 exports.deleteUser = deleteUser;
