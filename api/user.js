@@ -33,26 +33,20 @@ function getUserByIdForAuth(userId,client,fn)
   var query;
 
   query = client.query({
-    name: 'read user',
-    text: "SELECT username,password FROM users WHERE id = $1",
+    name: 'find user by id',
+    text: "SELECT username,password from users WHERE id = $1",
     values: [userId]
   });
 
   // return the user retrieved
-  query.on('end', function(row){
-    // console.log(query.text);
-    // console.dir(row);
-    if (row.rows.length == 0) {
-      console.log('Could Not Find User');
-      fn(true,false);
-    } else {
-      console.log('User Found');
-      fn(null,row.rows);
-    }
+  query.on('row', function(row){
+    console.log('User Found By ID');
+    fn(null,row);
   });
 
-  query.on('error',function(error){
-    console.dir(error);
+  query.on('error',function(err) {
+    console.log("Error: User not found by ID");
+    fn(null,false);
   });
 
 }// END function getUserByIdForAuth
@@ -81,20 +75,19 @@ function getUserByNameForAuth(username,client,fn)
   var query;
 
   query = client.query({
-    name: 'read user',
+    name: 'find user by name',
     text: "SELECT username,password from users WHERE username = $1",
     values: [username]
   });
 
   // return the user retrieved
   query.on('row', function(row){
-    // console.dir(row);
-    // console.log("Row");
+    console.log("User Found By Name");
     fn(null,row);
   });
 
   query.on('error',function(err) {
-    console.log("Error");
+    console.log("Error: User not found by Name");
     fn(null,false);
   });
 
@@ -310,48 +303,53 @@ exports.readUsers = readUsers;
 function updateUser(response,userId,userObject,client)
 {
   console.log('updating user: ' + userId);
-  var user   = JSON.parse(userObject);
-  // console.dir(user);
+  var updateUser   = JSON.parse(userObject);
 
   this.getUserByIdForAuth(userId,client,function(err,user){
     if (err) {
+      console.log('Error while updating user');
       restResponse.returnRESTResponse(
         response,
         true,
         "User does not exist",
         user);
     } else if (user === false) {
+      console.log('User not found for update');
       restResponse.returnRESTResponse(
         response,
         true,
         "User does not exist",
         null);
     } else {
+      console.log('Updating user');
       var query;
 
       query = client.query({
         name: 'update user',
-        text: "UPDATE users"+
-                "SET first_name = $1,last_name = $2, dob = $3"+
+        text: "UPDATE users "+
+                "SET first_name = $1, last_name = $2, dob = $3 "+
                 "WHERE id = $4",
-        values: [user.firstName, user.lastName, user.dob, userId]
+        values: [updateUser.firstName,
+                  updateUser.lastName,
+                  updateUser.dob,
+                  userId]
       });
 
-      query.on('error',function(err) {
-        restResponse.returnRESTResponse(
-          response,
-          true,
-          "Could not update user",
-          null);
-      });
-
-      query.on('end', function(result) {
-        // Send response to client
-        restResponse.returnRESTResponse(
-          response,
-          false,
-          "Updated user",
-          null);
+      query.on('end',function(result) {
+        console.dir(result);
+        if (result === false){
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not update user",
+            null);
+        } else {
+          restResponse.returnRESTResponse(
+            response,
+            false,
+            "Updated user",
+            null);
+        }
       });
     }
   });
