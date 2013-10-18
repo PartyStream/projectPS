@@ -37,18 +37,32 @@ function inviteAUser(response,eventId,userId,client)
     });
 
     query.on('error',function(err){
-        console.log('DB Error Caught: '+ err);
-        // Send response to client
-        response.writeHead(500,{"Content-Type":"text/plain"});
-        response.write("Could not invite user to event, please try again check API logs for error");
-        response.end();
+        console.log('DB Error Caught: ');
+        console.dir(err);
     });
 
-    query.on('end',function(){
-        // Send response to client
-        response.writeHead(200,{"Content-Type":"text/plain"});
-        response.write("User invited to event! ");
-        response.end();
+    query.on('end',function(result){
+        if (result === false) {
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not invite user to event, "+
+            "please try again and please report this",
+            null);
+        } else if (result.rowCount === 0 || result.rowCount === null) {
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not invite user to event, "+
+            "please try again and please report this",
+            null);
+        } else {
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "User invited to event",
+            null);
+        }
     });
 
 }// END function inviteAUser
@@ -84,17 +98,32 @@ function inviteManyUser(response,eventId,users,client)
         });
 
         query.on('error',function(err){
-            console.log('DB Error Caught: '+ err);
-            // Send response to client
-            response.writeHead(500,{"Content-Type":"text/plain"});
-            response.write("Could not invite users to event, please try again check API logs for error");
-            response.end();
+            console.log('DB Error Caught: ');
+            console.dir(err);
         });
     }
-    query.on('end',function(){
-        response.writeHead(200,{"Content-Type":"text/plain"});
-        response.write("Users invited to event! ");
-        response.end();
+    query.on('end',function(result){
+        if (result === false) {
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not invite user to event, "+
+            "please try again and please report this",
+            null);
+        } else if (result.rowCount === 0 || result.rowCount === null) {
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not invite user to event, "+
+            "please try again and please report this",
+            null);
+        } else {
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "User invited to event",
+            null);
+        }
     });
 
 }// END function inviteManyUser
