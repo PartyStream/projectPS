@@ -23,7 +23,8 @@ function returnRESTResponse(response,error,message,data)
     var json = JSON.stringify(array);
 
     if (error) {
-        response.writeHead(401, {
+        // TODO: These codes should intelligently returned
+        response.writeHead(500, {
           'content-type':'application/json',
           'content-length':json.length
         });
