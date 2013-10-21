@@ -50,7 +50,9 @@ function createPicture(response,eventId,creator,picture,s3,client)
 
     query = client.query({
       name: 'insert picture',
-      text: "INSERT INTO pictures (id,name,owner,url,hash,date_created) values (uuid_generate_v4(),$1,$2,$3,$4,current_timestamp) RETURNING id",
+      text: "INSERT INTO pictures (id,name,owner,url,hash,date_created) " +
+            "VALUES (uuid_generate_v4(),$1,$2,$3,$4,current_timestamp) " +
+            "RETURNING id",
       values: [picture.name, creator, url, hashDigest]
     });
 
@@ -74,7 +76,13 @@ function createPicture(response,eventId,creator,picture,s3,client)
         //get uploaded picture's extension
         fileExtenstion = path.extname(picture.name);
 
-        url = 'https://s3.amazonaws.com/'+bucket+'/'+eventId+'/'+hashDigest+fileExtenstion;
+        url = 'https://s3.amazonaws.com/'+
+                bucket+
+                '/'+
+                eventId+
+                '/'+
+                hashDigest+
+                fileExtenstion;
 
         // Create event relation in picture_events join table
         console.log('Creating relation between picture and event');
@@ -209,7 +217,9 @@ function readPictures(response,eventId,client,start,limit)
       response.end(json);
     });
 
-    query.on('error',function(err) { console.log('Unable to read pictures: '+ err); } );
+    query.on('error',function(err) {
+        console.log('Unable to read pictures: '+ err);
+    } );
 }// END function readPictures
 exports.readPictures = readPictures;
 
@@ -256,7 +266,9 @@ function readPicture(response,eventId,pictureId,client,s3)
         awsS3.download(s3,process.env.S3_BUCKET_NAME,eventId,data[0],response);
     });
 
-    query.on('error',function(err) { console.log('Unable to read pictures: '+ err); } );
+    query.on('error',function(err) {
+        console.log('Unable to read pictures: '+ err);
+    } );
 
 }// END function readPicture
 exports.readPicture = readPicture;
@@ -284,7 +296,8 @@ function updatePicture(response,pictureId,client,data)
 
     query = client.query({
       name: 'Update Picture',
-      text: "UPDATE pictures SET name = $1, owner = $2, date_updated = current_timestamp WHERE id = $3",
+      text: "UPDATE pictures SET name = $1, owner = $2, "+
+            "date_updated = current_timestamp WHERE id = $3",
       values: [pictureData.name, pictureData.owner,pictureId]
     });
 
