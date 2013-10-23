@@ -42,6 +42,9 @@ function createPicture(response,eventId,creator,picture,s3,client)
 
   if (picture !== undefined) {
     // create record in DB for picture and get back ID
+    mime          = picture.type;
+    var temp      = mime.split('/');
+    fileExtension = temp[1];
     console.log('Inserting image into DB');
 
     //create hash object using sha1
@@ -52,10 +55,11 @@ function createPicture(response,eventId,creator,picture,s3,client)
 
     query = client.query({
       name: 'insert picture',
-      text: "INSERT INTO pictures (id,name,owner,url,hash,date_created) " +
-        "VALUES (uuid_generate_v4(),$1,$2,$3,$4,current_timestamp) " +
+      text: "INSERT INTO pictures "+
+            "(id,name,owner,url,hash,date_created,mime,extension) " +
+        "VALUES (uuid_generate_v4(),$1,$2,$3,$4,current_timestamp,$5,$6) " +
         "RETURNING id",
-      values: [picture.name, creator, url, hashDigest]
+      values: [picture.name, creator, url, hashDigest,mime,fileExtension]
     });
 
     query.on('row', function(row, result) {
@@ -291,7 +295,7 @@ function readPicture(response,eventId,pictureId,client,s3)
 
   var awsS3 = require('./amazonS3');
   var query;
-  var sql =  "SELECT CONCAT(p.id,'.png') AS id, p.name,p.date_created ";
+  var sql =  "SELECT CONCAT(p.hash,'.',p.extension) AS id, p.name,p.date_created ";
     sql += "FROM pictures p ";
     sql += "WHERE p.id = $1";
 
