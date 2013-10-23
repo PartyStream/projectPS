@@ -38,9 +38,11 @@ function createEvent(response,eventObject,client)
 
   query.on('error',function(err) {
     console.log('DB Error Caught: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.write("Could not create Event");
-    response.end();
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "Could not create Event",
+      null);
   });
 
   query.on('row', function(row) {
@@ -55,16 +57,20 @@ function createEvent(response,eventObject,client)
 
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not assign event to user");
-      response.end();
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Could not assign event to user",
+        null);
     });
 
     query.on('end', function(result){
       // Send response to client
-      response.writeHead(200,{"Content-Type":"text/plain"});
-      response.write("Created Event! ");
-      response.end();
+      restResponse.returnRESTResponse(
+        response,
+        false,
+        "Created Event",
+        null);
     });
 
 
@@ -100,9 +106,11 @@ function readEvent(response,eventId,client)
 
   query.on('error',function(err) {
     console.log('DB Error Caught: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.write("Could not read event");
-    response.end();
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "Could not read event",
+      null);
   });
 
   query.on('row', function(row){
@@ -114,14 +122,19 @@ function readEvent(response,eventId,client)
       console.dir(result);
       console.log(result.rowCount + ' rows were received');
       if (result.rowCount == 0) {
-        response.writeHead(404, {'content-type':'text/plain'});
-        response.write("Oops, we can't process that");
-        response.end();
+        restResponse.returnRESTResponse(
+          response,
+          true,
+          "No Such Event",
+          null);
       } else {
         var json = JSON.stringify(data);
         console.log(json);
-        response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-        response.end(json);
+        restResponse.returnRESTResponse(
+          response,
+          false,
+          "Event Details",
+          json);
       }
     });
 
@@ -160,9 +173,11 @@ function getEvents(response,userId,client,start,limit)
     });
     query.on('error',function(err) {
       console.log('DB Error Caught: '+ err);
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not get events");
-      response.end();
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Could not get events",
+        null);
     });
 
      // return the user retrieved
@@ -175,8 +190,11 @@ function getEvents(response,userId,client,start,limit)
       // client.end();
       var json = JSON.stringify(data);
       console.log(json);
-      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-      response.end(json);
+      restResponse.returnRESTResponse(
+        response,
+        false,
+        "Event List",
+        json);
     });
 }// END function getEvents
 exports.getEvents = getEvents;
@@ -203,22 +221,41 @@ function updateEvent(response,eventId,event,client)
 
   query = client.query({
     name: 'Update Event',
-    text: "UPDATE events SET status = $1, name = $2, creator = $3, event_date = $4, last_modified = current_timestamp WHERE id = $5",
-    values: [eventData.status, eventData.name, eventData.creator,eventData.eventDate,eventId]
+    text: "UPDATE events "+
+          "SET status = $1, name = $2, creator = $3, event_date = $4, "+
+          "date_updated = current_timestamp WHERE id = $5",
+    values: [eventData.status,
+            eventData.name,
+            eventData.creator,
+            eventData.eventDate,
+            eventId]
   });
 
-  query.on('error',function(err){
-    console.log('DB Error Caught: ' + err);
-    response.writeHead(500,{"Content-Type":"text/plain"});
-    response.write("Error Updating Event!");
-    response.end();
+  query.on('error', function(err){
+    console.dir(err);
   });
 
   query.on('end', function(result){
-    // Send response to client
-    response.writeHead(200,{"Content-Type":"text/plain"});
-    response.write("Event Updated!");
-    response.end();
+    console.dir(result);
+    if (result === false) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Error updating event",
+        null);
+    } else if (result.rowCount === 0 || result.rowCount === null) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Error updating event",
+        null);
+    } else {
+      restResponse.returnRESTResponse(
+        response,
+        false,
+        "Event updated",
+        null);
+    }
   });
 
 }// END function updateEvent
@@ -250,16 +287,30 @@ function deleteEvent(response,eventId,client)
   });
 
   query.on('error',function(err) {
-    console.log('DB Error Caught: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.write("Could delete event");
-    response.end();
+    console.dir(err);
   });
 
   query.on('end', function(result) {
-    response.writeHead(200, {'content-type':'text/plain'});
-    response.write("Event deleted!");
-    response.end();
+    console.dir(result);
+    if (result === false) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Error deleting event",
+        null);
+    } else if (result.rowCount === 0 || result.rowCount === null) {
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Error deleting event",
+        null);
+    } else {
+      restResponse.returnRESTResponse(
+        response,
+        false,
+        "Event deleted",
+        null);
+    }
   });
 }// END function deleteEvent
 exports.deleteEvent = deleteEvent;

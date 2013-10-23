@@ -65,6 +65,8 @@ date_created TIMESTAMPTZ DEFAULT NOW(),
 date_updated TIMESTAMPTZ,
 url VARCHAR(150),
 hash VARCHAR(40) NOT NULL,
+mime VARCHAR(25),
+extension VARCHAR(10),
 PRIMARY KEY (id)
 );
 
