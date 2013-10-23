@@ -172,6 +172,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
                                 s3.putObject(params,function(err,data){
                                     if (err){
                                         console.log('Error uploading image:' + err);
+                                        // TODO: Rollback DB!
                                         restResponse.returnRESTResponse(
                                           response,
                                           true,
