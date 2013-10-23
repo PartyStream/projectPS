@@ -1,5 +1,3 @@
-restResponse = require("./helpers/response.js");
-
 /**
 //
 //  user.js
