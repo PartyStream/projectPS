@@ -116,11 +116,18 @@ function download(s3,bucket,eventId,fileData,response)
   var path = eventId + "/" + fileData.id;
   var file = {Bucket: bucket, Key: path};
 
+  console.dir(file);
+
   s3.client.getObject(file,function(err, data) {
 
     if (err)
     {
       console.log(err);
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Could not download picture from AWS",
+        null);
     }
     else
     {
@@ -128,8 +135,11 @@ function download(s3,bucket,eventId,fileData,response)
 
       var json = JSON.stringify(fileData);
       console.log(fileData);
-      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-      response.end(json);
+      restResponse.returnRESTResponse(
+        response,
+        false,
+        "",
+        json);
     }
   });
 
