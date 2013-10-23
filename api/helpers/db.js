@@ -14,34 +14,34 @@
 **/
 function doesIdExist(tableName,id,client,func)
 {
-    console.log('Checking for ID: '+id+' in table: '+tableName);
-    query = client.query({
-          name: 'Check for ID on table',
-          text: "SELECT COUNT(id) FROM " + tableName + " WHERE id = $1",
-          values: [id]
-    });
-    query.on('row', function(row, result) {
-      result.addRow(row);
-    });
+  console.log('Checking for ID: '+id+' in table: '+tableName);
+  query = client.query({
+      name: 'Check for ID on table',
+      text: "SELECT COUNT(id) FROM " + tableName + " WHERE id = $1",
+      values: [id]
+  });
+  query.on('row', function(row, result) {
+    result.addRow(row);
+  });
 
-    query.on('error', function(err) {
-      console.dir(err);
-    });
+  query.on('error', function(err) {
+    console.dir(err);
+  });
 
-    query.on('end',function(result){
-        console.dir(result);
-        if (result === false) {
-            func(false);
-        } else if (result.rowCount === 0 || result.rowCount === null) {
-            func(false);
-        } else {
-            if (result.rowCount > 0) {
-                func(true);
-            } else {
-                func(false);
-            }
-        }
-    });
+  query.on('end',function(result){
+    console.dir(result);
+    if (result === false) {
+      func(false);
+    } else if (result.rowCount === 0 || result.rowCount === null) {
+      func(false);
+    } else {
+      if (result.rowCount > 0) {
+        func(true);
+      } else {
+        func(false);
+      }
+    }
+  });
 
 }// END function doesIdExist
 exports.doesIdExist = doesIdExist;
