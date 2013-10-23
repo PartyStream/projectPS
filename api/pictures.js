@@ -39,131 +39,174 @@ function createPicture(response,eventId,creator,picture,s3,client)
     var fileExtension = "";
     var url;
 
-    // create record in DB for picture and get back ID
-    console.log('Inserting image into DB');
+    if (picture !== undefined) {
+        // create record in DB for picture and get back ID
+        console.log('Inserting image into DB');
 
-    //create hash object using sha1
-    hash = crypto.createHash('sha1');
-    //update the hash using a unique string
-    hash.update(creator + picture.name + timestampMS);
-    hashDigest = hash.digest('hex');
+        //create hash object using sha1
+        hash = crypto.createHash('sha1');
+        //update the hash using a unique string
+        hash.update(creator + picture.name + timestampMS);
+        hashDigest = hash.digest('hex');
 
-    query = client.query({
-      name: 'insert picture',
-      text: "INSERT INTO pictures (id,name,owner,url,hash,date_created) " +
-            "VALUES (uuid_generate_v4(),$1,$2,$3,$4,current_timestamp) " +
-            "RETURNING id",
-      values: [picture.name, creator, url, hashDigest]
-    });
-
-    query.on('error',function(err) {
-        console.log('DB Error Caught: '+ err);
-        // Send response to client
-        response.writeHead(200,{"Content-Type":"text/plain"});
-        response.write("Could not upload picture");
-        response.end();
-    });
-
-    // TODO update event updated field (timestamp)
-
-    var pictureId;
-    var bucket   = process.env.S3_BUCKET_NAME;
-    // return the id of the picture inserted
-    query.on('row', function(row) {
-        pictureId = row;
-        console.log('Inserted picture ID: '+pictureId.id);
-
-        //get uploaded picture's extension
-        fileExtenstion = path.extname(picture.name);
-
-        url = 'https://s3.amazonaws.com/'+
-                bucket+
-                '/'+
-                eventId+
-                '/'+
-                hashDigest+
-                fileExtenstion;
-
-        // Create event relation in picture_events join table
-        console.log('Creating relation between picture and event');
         query = client.query({
-          name: 'insert picture_events',
-          text: "INSERT INTO picture_events (picture_id,event_id) values ($1,$2)",
-          values: [pictureId.id, eventId]
+          name: 'insert picture',
+          text: "INSERT INTO pictures (id,name,owner,url,hash,date_created) " +
+                "VALUES (uuid_generate_v4(),$1,$2,$3,$4,current_timestamp) " +
+                "RETURNING id",
+          values: [picture.name, creator, url, hashDigest]
+        });
+
+        query.on('row', function(row, result) {
+          result.addRow(row);
         });
 
         query.on('error',function(err) {
             console.log('DB Error Caught: '+ err);
             // Send response to client
-            response.writeHead(200,{"Content-Type":"text/plain"});
-            response.write("Could not upload picture");
-            response.end();
+            console.dir(err);
         });
 
-        query = client.query({
-          name: 'add image URL',
-          text: "UPDATE pictures SET url = $1 WHERE id = $2",
-          values: [url,pictureId.id]
-        });
+        query.on('end',function(result) {
+            if (result === false) {
+                restResponse.returnRESTResponse(
+                        response,
+                        true,
+                        "Error uploading picture",
+                        null);
+            } else if (result.rowCount === 0 || result.rowCount === null) {
+                restResponse.returnRESTResponse(
+                        response,
+                        true,
+                        "Error uploading picture",
+                        null);
+            } else {
 
-        query.on('error',function(err) {
-            console.log('DB Error Caught: '+ err);
-            // Send response to client
-            response.writeHead(200,{"Content-Type":"text/plain"});
-            response.write("Could set picture URL");
-            response.end();
-        });
+                var insertedPicture;
+                var bucket      = process.env.S3_BUCKET_NAME;
+                insertedPicture = result.rows[0];
+                console.log('Inserted picture ID: '+insertedPicture.id);
+
+                //get uploaded picture's extension
+                fileExtenstion = path.extname(picture.name);
+
+                url = 'https://s3.amazonaws.com/'+
+                        bucket+
+                        '/'+
+                        eventId+
+                        '/'+
+                        hashDigest+
+                        fileExtenstion;
+
+                // TODO update event updated field (timestamp)
+
+                // TODO: Make sure event exists
+                dbHelper.doesIdExist('events',eventId,client,function(exists){
+                    console.dir(exists);
+
+                    if (exists === true) {
+                        // Create event relation in picture_events join table
+                        console.log('Creating relation between picture and event');
+                        query = client.query({
+                          name: 'insert picture_events',
+                          text: "INSERT INTO picture_events (picture_id,event_id) values ($1,$2)",
+                          values: [insertedPicture.id, eventId]
+                        });
+
+                        query.on('error',function(err) {
+                            console.log('DB Error Caught: '+ err);
+                            // Send response to client
+                            restResponse.returnRESTResponse(
+                              response,
+                              true,
+                              "Could not upload picture",
+                              null);
+                        });
+
+                        query = client.query({
+                          name: 'add image URL',
+                          text: "UPDATE pictures SET url = $1 WHERE id = $2",
+                          values: [url,insertedPicture.id]
+                        });
+
+                        query.on('error',function(err) {
+                            console.log('DB Error Caught: '+ err);
+                            // Send response to client
+                            restResponse.returnRESTResponse(
+                              response,
+                              true,
+                              "Could not set picture URL",
+                              null);
+                        });
 
 
-        console.log('Openning file');
+                        console.log('Openning file');
 
-        // use ID as filename to upload to S3
-        fs.readFile(picture.path,function(err,data) {
-            if(err)
-            {
-                console.log(err);
+                        // use ID as filename to upload to S3
+                        fs.readFile(picture.path,function(err,data) {
+                            if(err)
+                            {
+                                console.log(err);
+                                // Send response to client
+                                restResponse.returnRESTResponse(
+                                  response,
+                                  true,
+                                  "Could not upload picture",
+                                  null);
+                            }
+                            else
+                            {
+                                var fileName = hashDigest+fileExtenstion;
+                                var key      = eventId+'/'+fileName;
+                                var body     = data;
+                                var params   = {
+                                    "ACL"         : "public-read",
+                                    "Body"        : body,
+                                    "Bucket"      : bucket,
+                                    "Key"         : key,
+                                    "ContentType" : picture.type
+                                };
 
-                // Send response to client
-                response.writeHead(200,{"Content-Type":"text/plain"});
-                response.write("Could not upload picture");
-                response.end();
-            }
-            else
-            {
-                var fileName = hashDigest+fileExtenstion;
-                var key      = eventId+'/'+fileName;
-                var body     = data;
-                var params   = {
-                    "ACL"         : "public-read",
-                    "Body"        : body,
-                    "Bucket"      : bucket,
-                    "Key"         : key,
-                    "ContentType" : picture.type
-                };
-
-                console.log("Object to be put:");
-                console.dir(params);
-                s3.putObject(params,function(err,data){
-                    if (err){
-                        console.log('Error uploading image:' + err);
+                                console.log("Object to be put:");
+                                console.dir(params);
+                                s3.putObject(params,function(err,data){
+                                    if (err){
+                                        console.log('Error uploading image:' + err);
+                                        restResponse.returnRESTResponse(
+                                          response,
+                                          true,
+                                          "Error uploading Image",
+                                          null);
+                                    } else {
+                                        console.log("response from AWS:");
+                                        console.dir(data);
+                                        // Send response to client
+                                        restResponse.returnRESTResponse(
+                                          response,
+                                          false,
+                                          "Picture Uploaded",
+                                          null);
+                                    }
+                                });
+                            }
+                        });
                     } else {
-                        console.log("response from AWS:");
-                        console.dir(data);
-
+                        restResponse.returnRESTResponse(
+                          response,
+                          true,
+                          "Event not found",
+                          null);
                     }
                 });
             }
         });
-
-        console.log('File uploaded');
-
-
-    });
-
-    // Send response to client
-    response.writeHead(200,{"Content-Type":"text/plain"});
-    response.write("Picture Uploaded!");
-    response.end();
+    } else {
+        restResponse.returnRESTResponse(
+          response,
+          true,
+          "No picture found",
+          null);
+    }
 
 }// END function createPicture
 exports.createPicture = createPicture;
