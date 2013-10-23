@@ -256,9 +256,11 @@ function readPictures(response,eventId,client,start,limit)
     query.on('end', function() {
       // client.end();
       var json = JSON.stringify(data);
-      console.log(json);
-      response.writeHead(200, {'content-type':'application/json', 'content-length':json.length});
-      response.end(json);
+      restResponse.returnRESTResponse(
+          response,
+          false,
+          "",
+          json);
     });
 
     query.on('error',function(err) {
@@ -347,16 +349,20 @@ function updatePicture(response,pictureId,client,data)
 
     query.on('error',function(err){
       console.log('DB Error Caught: ' + err);
-      response.writeHead(500,{"Content-Type":"text/plain"});
-      response.write("Error Updating picture!");
-      response.end();
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Error updating picture",
+        null);
     });
 
     query.on('end', function(result){
       // Send response to client
-      response.writeHead(200,{"Content-Type":"text/plain"});
-      response.write("Picture Updated!");
-      response.end();
+      restResponse.returnRESTResponse(
+        response,
+        false,
+        "Picture updated",
+        null);
     });
 
 }// END function updatePicture
@@ -401,9 +407,11 @@ function deletePicture(response,eventId,pictureId,client,s3)
     });
 
     query.on('error',function(err) {
-        response.writeHead(500, {'content-type':'text/plain'});
-        response.write("Could not delete picture from event");
-        response.end();
+        restResponse.returnRESTResponse(
+          response,
+          true,
+          "Could not delete picture from event",
+          null);
     });
 
     query.on('end', function(result) {
@@ -415,15 +423,19 @@ function deletePicture(response,eventId,pictureId,client,s3)
         });
 
         query.on('error',function(err) {
-            response.writeHead(500, {'content-type':'text/plain'});
-            response.write("Could not delete picture");
-            response.end();
+            restResponse.returnRESTResponse(
+              response,
+              true,
+              "Could not delete picture",
+              null);
         });
 
         query.on('end', function(result) {
-            response.writeHead(200, {'content-type':'text/plain'});
-            response.write("Picture deleted");
-            response.end();
+            restResponse.returnRESTResponse(
+              response,
+              false,
+              "Picture deleted",
+              null);
         });
     });
 
