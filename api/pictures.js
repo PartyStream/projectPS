@@ -37,6 +37,7 @@ function createPicture(response,eventId,creator,picture,s3,client)
     var timestampMS   = Date.now();
     var hashDigest    = "";
     var fileExtension = "";
+    var mime          = "";
     var url;
 
     if (picture !== undefined) {
@@ -290,7 +291,6 @@ function readPicture(response,eventId,pictureId,client,s3)
 
     var awsS3 = require('./amazonS3');
     var query;
-    var data = [];
     var sql =  "SELECT CONCAT(p.id,'.png') AS id, p.name,p.date_created ";
         sql += "FROM pictures p ";
         sql += "WHERE p.id = $1";
@@ -303,18 +303,33 @@ function readPicture(response,eventId,pictureId,client,s3)
     });
 
     // return the pictures retrieved
-    query.on('row', function(row) {
-        data.push(row);
-    });
-
-    query.on('end', function() {
-        // get image data from S3
-        awsS3.download(s3,process.env.S3_BUCKET_NAME,eventId,data[0],response);
+    query.on('row', function(row,result) {
+        result.addRow(row);
     });
 
     query.on('error',function(err) {
         console.log('Unable to read pictures: '+ err);
     } );
+
+    query.on('end', function(result) {
+        if (result === false) {
+            restResponse.returnRESTResponse(
+                response,
+                true,
+                "Could not find picture",
+                null);
+        } else if (result.rowCount === 0 || result.rowCount === null) {
+            restResponse.returnRESTResponse(
+                response,
+                true,
+                "Could not find picture",
+                null);
+        } else {
+            fileName = result.rows[0];
+            // get image data from S3
+            awsS3.download(s3,process.env.S3_BUCKET_NAME,eventId,fileName,response);
+        }
+    });
 
 }// END function readPicture
 exports.readPicture = readPicture;
