@@ -26,24 +26,30 @@
 function getUserByIdForAuth(userId,client,fn)
 {
 
-  console.log('Reading user for authentication: ' + userId);
+  console.log('Reading user by ID for authentication: ' + userId);
 
   var query;
 
   query = client.query({
-    name: 'read user',
+    name: 'find user by id',
     text: "SELECT username,password from users WHERE id = $1",
     values: [userId]
   });
 
   // return the user retrieved
   query.on('row', function(row){
+    console.log('User Found By ID');
     fn(null,row);
   });
 
-  query.on('error',function(err) {
-    console.log('DB Error: '+err);
-    fn(new Error('User ' + id + ' does not exist'));
+  query.on('end', function(result){
+    if (result === false) {
+      console.log("Error: User not found by ID");
+      fn(null,false);
+    } else if(result.rowCount === 0) {
+      console.log("Error: User not found by ID");
+      fn(null,false);
+    }
   });
 
 }// END function getUserByIdForAuth
@@ -72,20 +78,19 @@ function getUserByNameForAuth(username,client,fn)
   var query;
 
   query = client.query({
-    name: 'read user',
+    name: 'find user by name',
     text: "SELECT username,password from users WHERE username = $1",
     values: [username]
   });
 
   // return the user retrieved
   query.on('row', function(row){
-    console.dir(row);
-    console.log("Row");
+    console.log("User Found By Name");
     fn(null,row);
   });
 
   query.on('error',function(err) {
-    console.log("Error");
+    console.log("Error: User not found by Name");
     fn(null,false);
   });
 
@@ -112,37 +117,57 @@ function createUser(response,userObject,client)
 
   console.log('Creating user');
   console.dir(user);
-  // Hash Password
-  bcrypt.hash(user.password, null, null, function(err, hash) {
+
+  // Check if user already exists
+  getUserByNameForAuth(user.username,client,function(err,user){
     if (err) {throw err};
-    var query;
-    query = client.query({
-      name: 'insert user',
-      text: "INSERT INTO users("+
-        "username,status,password,date_created,first_name,last_name,dob,email)"+
-        "values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
-      values: [ user.username,
-                hash,
-                user.first_name,
-                user.last_name,
-                user.dob,
-                user.email
-              ]
-    });
 
-    query.on('error',function(err) {
-      console.log('Unable to create user: '+ err);
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not create User");
-      response.end();
-    });
+    if (!user) {
+      // Hash Password
+      bcrypt.hash(user.password, null, null, function(err, hash) {
+        if (err) {throw err};
+        var query;
+        query = client.query({
+          name: 'insert user',
+          text: "INSERT INTO users("+
+            "username,status,password,date_created,first_name,last_name,dob,email)"+
+            "values($1,'1',$2,current_timestamp,$3,$4,$5,$6)",
+          values: [ user.username,
+                    hash,
+                    user.first_name,
+                    user.last_name,
+                    user.dob,
+                    user.email
+                  ]
+        });
 
-    // Send response to client
-    query.on('end', function(result){
-      response.writeHead(200,{"Content-Type":"text/plain"});
-      response.write("Create User! ");
-      response.end();
-    });
+        query.on('error',function(err) {
+          console.log('Unable to create user: '+ err);
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not create user",
+            null);
+        });
+
+        // Send response to client
+        query.on('end', function(result){
+          restResponse.returnRESTResponse(
+            response,
+            false,
+            "User Created",
+            null);
+        });
+      });
+    } else {
+      // User already exists
+      console.log('User already exists!');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "Username taken",
+        null);
+    }
   });
 }// END function createUser
 exports.createUser = createUser;
@@ -183,24 +208,27 @@ function readUser(response,username,client)
   query.on('end', function(result) {
       console.log(result.rowCount + ' rows were received');
       if (result.rowCount == 0) {
-        response.writeHead(404, {'content-type':'text/plain'});
-        response.write("Oops, we can't process that");
-        response.end();
+        restResponse.returnRESTResponse(
+          response,
+          true,
+          "Oops, we can't process that",
+          null);
       } else {
-        var json = JSON.stringify(data);
-        console.log(json);
-        response.writeHead(200, {
-          'content-type':'application/json',
-          'content-length':json.length
-        });
-        response.end(json);
+        console.log(data);
+        restResponse.returnRESTResponse(
+          response,
+          false,
+          "Found User",
+          data);
       }
     });
 
   query.on('error',function(err) {
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Oops, we can't process that");
-      response.end();
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "Oops, we can't process that",
+      null);
   });
 
 
@@ -242,21 +270,20 @@ console.dir(query);
 
   query.on('end', function() {
     // client.end();
-    var json = JSON.stringify(data);
-    console.log(json);
-    response.writeHead(
-      200,
-      {
-        'content-type':'application/json',
-        'content-length':json.length
-      });
-    response.end(json);
+    restResponse.returnRESTResponse(
+      response,
+      false,
+      "User Listing",
+      data);
   });
 
   query.on('error',function(err) {
-    console.log('Unable to read a user: '+ err);
-    response.writeHead(500, {'content-type':'text/plain'});
-    response.end('Could not get users');
+    console.log('Unable to read a users');
+    restResponse.returnRESTResponse(
+      response,
+      true,
+      "UNable to read users",
+      null);
   });
 
 }// END function readUsers
@@ -279,31 +306,56 @@ exports.readUsers = readUsers;
 function updateUser(response,userId,userObject,client)
 {
   console.log('updating user: ' + userId);
-  var user   = JSON.parse(userObject);
-  console.dir(user);
-  var query;
+  var updateUser   = JSON.parse(userObject);
 
-  query = client.query({
-    name: 'update user',
-    text: "UPDATE users"+
-            "SET first_name = $1,last_name = $2, dob = $3"+
-            "WHERE id = $4",
-    values: [user.firstName, user.lastName, user.dob, userId]
+  this.getUserByIdForAuth(userId,client,function(err,user){
+    if (err) {
+      console.log('Error while updating user');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        user);
+    } else if (user === false) {
+      console.log('User not found for update');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        null);
+    } else {
+      console.log('Updating user');
+      var query;
+
+      query = client.query({
+        name: 'update user',
+        text: "UPDATE users "+
+                "SET first_name = $1, last_name = $2, dob = $3 "+
+                "WHERE id = $4",
+        values: [updateUser.firstName,
+                  updateUser.lastName,
+                  updateUser.dob,
+                  userId]
+      });
+
+      query.on('end',function(result) {
+        console.dir(result);
+        if (result === false){
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not update user",
+            null);
+        } else {
+          restResponse.returnRESTResponse(
+            response,
+            false,
+            "Updated user",
+            null);
+        }
+      });
+    }
   });
-
-  query.on('error',function(err) {
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not update user");
-      response.end();
-  });
-
-  query.on('end', function(result) {
-    // Send response to client
-      response.writeHead(200,{"Content-Type":"text/plain"});
-      response.write("User Updated!");
-      response.end();
-  });
-
 }// END function updateUser
 exports.updateUser = updateUser;
 
@@ -324,24 +376,47 @@ function deleteUser(response,userId,client)
 {
   console.log('Deleting user: ' + userId);
 
-  var query;
+  this.getUserByIdForAuth(userId,client,function(err,user){
+    if (err) {
+      console.log('Error while deleting user');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        user);
+    } else if (user === false) {
+      console.log('User not found for delete');
+      restResponse.returnRESTResponse(
+        response,
+        true,
+        "User does not exist",
+        null);
+    } else {
+      var query;
 
-  query = client.query({
-    name: 'delete user',
-    text: "UPDATE users SET status = '0' where id = $1",
-    values: [userId]
-  });
+      query = client.query({
+        name: 'delete user',
+        text: "UPDATE users SET status = '0' where id = $1",
+        values: [userId]
+      });
 
-  query.on('error',function(err) {
-      response.writeHead(500, {'content-type':'text/plain'});
-      response.write("Could not delete user");
-      response.end();
-  });
-
-  query.on('end', function(result) {
-    response.writeHead(200, {'content-type':'text/plain'});
-    response.write("User deleted!");
-    response.end();
+      query.on('end', function(result) {
+        console.dir(result);
+        if (result === false){
+          restResponse.returnRESTResponse(
+            response,
+            true,
+            "Could not delete user",
+            null);
+        } else {
+          restResponse.returnRESTResponse(
+            response,
+            false,
+            "Deleted user",
+            null);
+        }
+      });
+    }
   });
 }// END function deleteUser
 exports.deleteUser = deleteUser;
