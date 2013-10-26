@@ -128,13 +128,12 @@ function readEvent(response,eventId,client)
           "No Such Event",
           null);
       } else {
-        var json = JSON.stringify(data);
-        console.log(json);
+        console.log(data);
         restResponse.returnRESTResponse(
           response,
           false,
           "Event Details",
-          json);
+          data);
       }
     });
 
@@ -188,13 +187,12 @@ function getEvents(response,userId,client,start,limit)
     // return the event retrieved
     query.on('end', function() {
       // client.end();
-      var json = JSON.stringify(data);
-      console.log(json);
+      console.log(data);
       restResponse.returnRESTResponse(
         response,
         false,
         "Event List",
-        json);
+        data);
     });
 }// END function getEvents
 exports.getEvents = getEvents;
