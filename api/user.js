@@ -305,7 +305,7 @@ console.dir(query);
     restResponse.returnRESTResponse(
       response,
       true,
-      "UNable to read users",
+      "Unable to read users",
       null);
   });
 
