@@ -260,12 +260,11 @@ function readPictures(response,eventId,client,start,limit)
 
   query.on('end', function() {
     // client.end();
-    var json = JSON.stringify(data);
     restResponse.returnRESTResponse(
       response,
       false,
       "",
-      json);
+      data);
   });
 
   query.on('error',function(err) {
@@ -301,7 +300,7 @@ function readPicture(response,eventId,pictureId,client,s3)
 
 
   query = client.query({
-    name: 'read pictures',
+    name: 'read picture',
     text: sql,
     values: [pictureId]
   });

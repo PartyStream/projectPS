@@ -133,13 +133,12 @@ function download(s3,bucket,eventId,fileData,response)
     {
       fileData.file = data;
 
-      var json = JSON.stringify(fileData);
       console.log(fileData);
       restResponse.returnRESTResponse(
         response,
         false,
         "",
-        json);
+        data);
     }
   });
 

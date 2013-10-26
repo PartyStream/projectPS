@@ -91,7 +91,17 @@ function getUserByNameForAuth(username,client,fn)
 
   query.on('error',function(err) {
     console.log("Error: User not found by Name");
-    fn(null,false);
+    console.dir(err);
+  });
+
+  query.on('end', function(result){
+    if (result === false) {
+      console.log("Error: User not found by ID");
+      fn(null,false);
+    } else if(result.rowCount === 0) {
+      console.log("Error: User not found by ID");
+      fn(null,false);
+    }
   });
 
 }// END function getUserByNameForAuth
@@ -119,10 +129,12 @@ function createUser(response,userObject,client)
   console.dir(user);
 
   // Check if user already exists
-  getUserByNameForAuth(user.username,client,function(err,user){
-    if (err) {throw err};
-
-    if (!user) {
+  getUserByNameForAuth(user.username,client,function(err,userExists){
+    if (err) {
+      throw err
+    } else if (userExists === false) {
+      console.dir(user);
+      console.dir(userExists);
       // Hash Password
       bcrypt.hash(user.password, null, null, function(err, hash) {
         if (err) {throw err};
@@ -143,25 +155,36 @@ function createUser(response,userObject,client)
 
         query.on('error',function(err) {
           console.log('Unable to create user: '+ err);
-          restResponse.returnRESTResponse(
-            response,
-            true,
-            "Could not create user",
-            null);
         });
 
         // Send response to client
         query.on('end', function(result){
-          restResponse.returnRESTResponse(
-            response,
-            false,
-            "User Created",
-            null);
+          if (result === false) {
+            restResponse.returnRESTResponse(
+              response,
+              true,
+              "Could not create user",
+              null);
+          } else if (result.rowCount === 0 || result.rowCount === null) {
+            restResponse.returnRESTResponse(
+              response,
+              true,
+              "Could not create user",
+              null);
+          } else {
+            restResponse.returnRESTResponse(
+              response,
+              false,
+              "User Created",
+              null);
+          }
         });
       });
     } else {
       // User already exists
       console.log('User already exists!');
+      console.dir(user);
+      console.dir(userExists);
       restResponse.returnRESTResponse(
         response,
         true,
@@ -282,7 +305,7 @@ console.dir(query);
     restResponse.returnRESTResponse(
       response,
       true,
-      "UNable to read users",
+      "Unable to read users",
       null);
   });
 

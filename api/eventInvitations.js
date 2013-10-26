@@ -59,7 +59,7 @@ function inviteAUser(response,eventId,userId,client)
         } else {
           restResponse.returnRESTResponse(
             response,
-            true,
+            false,
             "User invited to event",
             null);
         }
@@ -120,7 +120,7 @@ function inviteManyUser(response,eventId,users,client)
         } else {
           restResponse.returnRESTResponse(
             response,
-            true,
+            false,
             "User invited to event",
             null);
         }
